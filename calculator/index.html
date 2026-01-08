@@ -1,0 +1,964 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" href="/assets/img/brand/favicon-32x32.svg" type="image/png">
+
+<link rel="canonical" href="https://www.projectgvm.com.au/">
+
+<!-- GA4 Base -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ12ZW06K4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LJ12ZW06K4');
+</script>
+
+<meta name="google-site-verification" content="XYmjDFXZ8f9EY1S40y_ZlQScJsFsRazfvTSx92WDxDI" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Project GVM",
+  "url": "https://www.projectgvm.com.au/"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Project GVM",
+  "url": "https://www.projectgvm.com.au/",
+  "logo": "https://calculator.projectgvm.com.au/logo_favicon.svg"
+}
+</script>
+  
+<title>Free 4WD GVM Calculator - Vehicle Weight & Axle Loads </title>
+
+<meta name="description" content="Free Australian 4WD GVM calculator to estimate payload, axle loads and vehicle weight. Built using real vehicle geometry to help you stay legal, safe and compliant." />
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between GVM and GCM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GVM (Gross Vehicle Mass) is the maximum weight your vehicle can legally carry on its own wheels. GCM (Gross Combination Mass) is the maximum weight of your vehicle plus anything you are towing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a suspension upgrade increase my GVM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not automatically. While aftermarket suspension can handle weight better, legally increasing your GVM requires a certified GVM upgrade plate approved by an engineer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What makes this GVM calculator different?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator uses vehicle-specific geometry and real brand-based accessory weights. This allows far more accurate axle load and GVM estimates compared to generic calculators."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to estimate accessory weights?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Accessories are selected by brand and model so users don’t need to guess weights or research specifications separately. It is recommended to verify weights with manufacturers specifications before committing to a purchase."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between GVM and Payload?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GVM (Gross Vehicle Mass) is the maximum legal weight of your vehicle when fully loaded. Payload is the weight you can add to the vehicle (passengers, accessories, fuel, and cargo). Put simply: Curb Weight + Payload = GVM. This calculator helps you see if your payload exceeds the GVM limit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does tow ball weight count towards my GVM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, absolutely. The downward weight of your caravan or trailer on the tow ball (Tow Ball Mass) is considered as vehicle 'payload' and acts as a heavy weight on your rear axle. While this tool does not calculate GCM (total combination weight), you can add your tow ball weight as an accessory to see how it affects your GVM and rear axle load."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a suspension upgrade automatically increase my GVM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Installing heavier springs or shocks improves load-carrying ability and reduces sag, but it does not legally change your GVM. To legally carry more weight, you must have a certified GVM Upgrade plate fitted by an approved engineer. This calculator is perfect for determining if you need to pursue a GVM upgrade."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is Rear Axle Load important?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Many 4WDs exceed their Rear Axle Capacity before they hit their total GVM limit. This happens due to the 'cantilever effect' of heavy items behind the rear wheels (like drawers, fridges, spare wheel carriers, and tow ball weight). This tool calculates that leverage to warn you if your rear axle is overloaded."
+      }
+    }
+  ]
+}
+</script>
+
+
+<style>
+  /* --- CSS Variables --- */
+  :root {
+    --primary-color: #0b5394;
+    --primary-hover: #083d6e;
+    --text-color: #333333;
+    --bg-color: #f4f7f6;
+    --card-radius: 12px;
+    --transition-speed: 0.2s;
+  }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: auto; /* Do NOT use 100vh or 100% */
+    overflow-y: auto; /* This hides the inner scrollbar */
+    font-family: Arial, sans-serif; 
+}
+
+/* --- Navigation Bar Styles --- */
+.site-nav {
+    background-color: var(--primary-color);
+    color: white;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    /* REMOVED: box-shadow */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    width: 100%;
+}
+
+.nav-content {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Area - Now a Clickable Link */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    
+    /* Link Styling Overrides */
+    text-decoration: none; /* Removes underline */
+    color: white;          /* Forces text to be white */
+    cursor: pointer;
+}
+
+.nav-brand:hover {
+    opacity: 0.9;          /* Slight fade effect on hover */
+}
+
+.nav-brand img {
+    height: 36px; 
+    width: auto;  
+}
+
+/* Menu Links */
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 20px 0;
+    transition: opacity 0.2s;
+}
+
+.nav-links a:hover {
+    color: white;
+    opacity: 1;
+}
+
+.nav-links a.active {
+    font-weight: 700;
+    color: white;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+  /* --- Base Styles --- */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary-color);
+  }
+
+/* --- Main Wrapper --- */
+  .gvm-wrapper {
+    /* CHANGED: Let content define height initially */
+    min-height: calc(100vh - 50px);
+    color: var(--text-color);
+    line-height: 1.45;
+    padding: 0 15px;
+    padding-bottom: 20px; /* Add breathing room for footer */
+  }
+
+  /* CHANGED: When active, lock the wrapper to the screen size */
+  .gvm-wrapper.app-active {
+    height: calc(100dvh - 50px);
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+
+  /* --- Header Section --- */
+  .gvm-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    margin-top: 15px;
+  }
+  .gvm-header h1 { font-size: 48px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.5px; }
+  .gvm-header p { font-size: 20px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+  
+  /* Hide header when app is active */
+  .gvm-wrapper.app-active .gvm-header { display: none; }
+
+
+
+  /* --- Main Content Card (Intro) --- */
+.seo-content {
+    background: white;
+    width: 100%;             /* Added: Ensures it fills space on small screens */
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: var(--card-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-out;
+    box-sizing: border-box;  /* Added: includes padding in calculation */
+  }
+
+  .seo-content h2 {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .seo-content h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-top: 20px;
+    margin-bottom: 6px;
+  }
+
+  .seo-content p {
+    margin-bottom: 6px;
+    color: #4a4a4a;
+  }
+
+  .seo-content ul {
+    margin-bottom: 6px;
+    margin-top: 0;
+    padding-left: 20px;
+    color: #4a4a4a;
+  }
+  
+  .seo-content li {
+    margin-bottom: 4px;
+  }
+
+  /* --- Disclaimer Box --- */
+  .disclaimer-box {
+    background-color: #fff8e1;
+    border-left: 5px solid #ffc107;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+
+  .disclaimer-box h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+    color:  #856404;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .disclaimer-box p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    color: #856404;
+  }
+
+  /* --- Action Area --- */
+  .start-box {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 0;
+    padding-top: 2px;
+    border-top: 1px solid #eee;
+  }
+
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    user-select: none;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background var(--transition-speed);
+  }
+
+  .checkbox-label:hover {
+    background-color: #f0f4f8;
+  }
+
+  .start-btn {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 15px;
+    box-shadow: 0 4px 6px rgba(11, 83, 148, 0.2);
+    transition: all var(--transition-speed);
+  }
+
+  .start-btn:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(11, 83, 148, 0.3);
+  }
+
+  .start-btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+  }
+
+
+  /* --- App Container --- */
+  #app-container {
+    display: none;
+    width: 100%;
+    height: calc(100dvh - 70px); /* was 92dvh; */
+    overflow: hidden;
+    position: relative;
+    background: white;
+    border-radius: var(--card-radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  iframe {
+    position: absolute;
+    top: -40px; 
+    left: -15px;
+    width: calc(100% + 30px);
+    height: calc(100% + 78px);
+    border: none;
+    z-index: 1;
+  }
+
+  /* --- Loader --- */
+  .loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+
+  .loading-text {
+    font-weight: 500;
+    color: var(--primary-color);
+    font-size: 1rem;
+  }
+
+  /* --- SEO Footer Section --- */
+.seo-footer {
+    width: 100%;
+    margin: 30px auto 0;
+    box-sizing: border-box; /* Good practice to add here too */
+  }
+
+  .seo-content, .seo-footer-card {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 30px auto; /* Adds spacing between cards */
+    padding: 30px;
+    border-radius: var(--card-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .seo-footer h2 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    margin-top: 0;
+    text-align: left;
+  }
+
+
+ /* Definition List Styles */
+  dl { margin: 0; }
+  dt { font-weight: 600; color: var(--primary-color); margin-top: 15px; }
+  dt:first-child { margin-top: 0; }
+  dd { margin: 4px 0 0 0; color: #555; font-size: 0.95rem; }
+
+  /* FAQ Styles */
+  .faq-item {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+  }
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 12px 0;
+    list-style: none;
+    position: relative;
+    padding-right: 30px;
+    color: #333;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item summary::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+  }
+  .faq-item details[open] summary::after {
+    content: '-';
+  }
+  .faq-item p {
+    margin-top: 0;
+    padding-bottom: 15px;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+.faq-item p a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .faq-item p a:hover {
+    text-decoration: underline;
+  }
+
+
+  .more-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.95rem;
+  }
+
+  .more-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .more-link a:hover {
+    text-decoration: underline;
+  }
+
+  /* --- Animations --- */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* --- Mobile Tweaks --- */
+  @media (max-width: 768px) {
+    .gvm-header h1 { font-size: 1.6rem; }
+    .gvm-header p { font-size: 0.95rem; }
+    #app-container {
+    height: calc(100vh - 70px);   /* fallback */
+    height: calc(100dvh - 70px);  /* preferred */
+  }
+
+    .seo-content, .seo-footer-card {
+      padding: 20px 15px;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 14px;
+    }
+
+    footer {
+        display: none;
+    }
+
+  }
+
+footer {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 10px 10px;
+    text-align: center;
+    background-color: var(--primary-color); 
+    color: #ffffff;
+    border-top: none;
+    font-family: Arial, sans-serif;
+  }
+
+  .footer-links {
+    margin-bottom: 10px;
+  }
+
+  .footer-links a {
+    text-decoration: none;
+    color: #ffffff; /* White text */
+    font-size: 13px;
+    font-weight: 400;
+    margin: 0 5px;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer-links a:hover {
+    opacity: 0.8; /* Slightly fade on hover */
+    text-decoration: underline;
+  }
+
+  #.footer-separator {
+  #  color: #ffffff;
+  #  opacity: 0.5; /* Dimmed separator */
+  #  font-size: 10px;
+  #}
+
+  .footer-copyright {
+    color: #ffffff;
+    opacity: 1.0; /* Slightly dimmed copyright text */
+    font-size: 11px;
+    font-weight: 400;
+    margin: 0 5px;
+    letter-spacing: 0.5px;
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+    <div class="nav-content">
+        <a href="https://www.projectgvm.com.au/home" class="nav-brand">
+            <img src="/assets/img/brand/logo-white.svg" alt="Project GVM">
+            <span>Project GVM</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="https://www.projectgvm.com.au/home">Home</a>
+            <a href="#" class="active">Calculator</a>
+            <a href="https://www.projectgvm.com.au/learn/understanding-gvm">Learn</a>
+            <a href="https://www.projectgvm.com.au/FAQ">FAQs</a>
+            <a href="https://www.projectgvm.com.au/about">About</a>
+        </div>
+    </div>
+</nav>
+
+
+<div class="gvm-wrapper">
+  
+  <div class="gvm-header">
+    <h1>4WD GVM Calculator</h1>
+    <p>Estimate your vehicle’s GVM and axle loads.</p>
+  </div>
+
+  <div class="seo-content">
+    <h2>About the Calculator</h2>
+    <p>
+  This <strong>free</strong> 4WD GVM calculator helps Australian drivers accurately estimate <strong>remaining payload, axle loads, and vehicle weight</strong> using real-world vehicle geometry and brand-specific accessories.
+</p>
+
+<p>
+  Unlike generic calculators, this tool accounts for <strong>vehicle-specific mounting positions</strong>   and <strong>real accessory weights</strong>, so you’re not guessing or relying on rough averages.
+</p>
+
+<p>
+  It’s ideal for popular platforms such as the
+  <strong>Toyota LandCruiser 200 Series</strong>,
+  <strong>79 Series</strong>,
+  <strong>Y62 Patrol</strong>,
+  <strong>Prado</strong>, and other touring 4WDs.
+</p>
+
+
+<h3>Why staying under GVM matters</h3>
+
+<p>
+  Exceeding your GVM doesn’t just affect legality - it directly impacts safety,
+  handling, and long-term reliability.
+</p>
+
+<ul>
+  <li><strong>Safety & Handling:</strong> Correct weight distribution improves braking, stability, and steering.</li>
+  <li><strong>Insurance Compliance:</strong> Overloaded vehicles may void insurance coverage.</li>
+  <li><strong>Component Longevity:</strong> Reduces stress on suspension, chassis, bearings, and tyres.</li>
+</ul>
+
+<h3>How this calculator is different</h3>
+
+<p>
+  Most online GVM calculators use generic weight assumptions.
+  This calculator goes further by modelling <strong>real-world vehicle geometry</strong>
+  and <strong>brand-specific accessories</strong>.
+</p>
+
+<ul>
+  <li>
+    <strong>Vehicle-Specific Load Positions:</strong>
+    Each vehicle model uses realistic axle distances and mounting points,
+    so weight placement reflects how your vehicle actually behaves.
+  </li>
+
+  <li>
+    <strong>Brand & Model Accessories:</strong>
+    Accessories are based on real products - meaning you don’t need to guess weights
+    or search manufacturer specs.
+  </li>
+
+  <li>
+    <strong>Realistic Load Transfer:</strong>
+    See how accessories affect both total GVM and front/rear axle loads.
+  </li>
+</ul>
+
+    <div class="disclaimer-box">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Quick Note Before You Start
+      </h3>
+      <p>
+        This calculator provides realistic estimates based on real-world data. For legal compliance or certification, always confirm results using a certified weighbridge or engineer.
+      </p>
+    </div>
+
+    <div class="start-box">
+
+<p style="font-size: 0.9rem; color: #555; margin-bottom: 12px; text-align: left;">
+  Step 1 of 3: Getting Started
+</p>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="acknowledge" aria-label="Acknowledge estimation disclaimer" />
+        I understand this is an estimate, not a certified measurement
+      </label>
+      <br>
+      <button class="start-btn" id="startBtn" disabled>
+        Calculate My Vehicle Weight
+      </button>
+    </div>
+
+<p style="font-size: 0.85rem; color: #666; margin-top: 20px; margin-bottom: 0px; text-align: center;">
+  No signup • No personal data stored • Quick • Simple
+</p>
+
+  </div>
+
+  <div id="app-container">
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading capable 4WDs and fun modifications...</div>
+    </div>
+    <iframe id="gvm-frame" title="GVM Calculator App"></iframe>
+  </div>
+
+
+ <div class="seo-footer">
+
+    <div class="seo-footer-card">
+  <h2>Built Using Real Vehicle Geometry</h2>
+  <p>
+    Unlike basic calculators, this tool uses vehicle-specific axle positions and mounting locations
+    to accurately model how weight is distributed across your 4WD.
+  </p>
+
+  <p>
+    Accessory weights are based on real brand and model data - helping you plan your setup
+    without relying on guesswork or rough estimates.
+  </p>
+
+<h2>Who Should Use a 4WD GVM Calculator?</h2>
+<p>
+This tool is ideal for touring setups, tradespeople, off-road builds, and anyone fitting accessories such as bull bars, canopies, drawers, roof racks, or towing caravans and trailers.
+</p>
+
+<div class="faq-item">
+  <details>
+    <summary>What makes this GVM calculator different?</summary>
+          <p>This calculator uses vehicle-specific geometry and real brand-based accessory weights. This allows far more accurate axle load and GVM estimates compared to generic calculators. Need more details? <a href="https://www.projectgvm.com.au/learn/Calculator-Working" target="_blank">Visit our “How the Calculator Works” page</a>.
+    </p>
+  </details>
+</div>
+
+      <div class="faq-item">
+        <details>
+          <summary>Do I need to estimate accessory weights?</summary>
+          <p>No. Accessories are selected by brand and model so users don’t need to guess weights or research specifications separately. It is recommended to verify weights with manufacturers specifications before committing to a purchase. See our  <a href="https://www.projectgvm.com.au/learn/top-accessories" target="_blank">”Top Accessories” for accessory selection tips</a>.</p></p>
+        </details>
+      </div>
+   </div>
+
+
+
+ <div class="seo-footer">
+
+    <div class="seo-footer-card">
+      <h2>Vehicle Weight Glossary</h2>
+      <dl>
+        <dt>Tare Mass</dt>
+        <p>The weight of the vehicle with 10L of fuel and all fluids, but <em>zero</em> passengers or cargo. This is often the "showroom" weight.</p>
+
+        <dt>Kerb Weight</dt>
+        <p>The vehicle ready to drive with a full tank of fuel, but no passengers or payload. (Check your manual, definitions vary by manufacturer).</p>
+        
+        <dt>Axle Capacity</dt>
+        <p>The maximum weight a single axle (front or rear) can carry. The sum of Front + Rear Axle limits is usually <em>higher</em> than the total GVM.</p>
+
+<div class="more-link">
+        <p>Need more details? <a href="https://www.projectgvm.com.au/learn/understanding-gvm" target="_blank">See our article “Ultimate Guide for 4WD Owners”</a></p>
+
+      </dl>
+    </div>
+
+
+
+
+    <div class="seo-footer-card">
+      <h2>Common GVM Questions</h2>
+      
+<div class="faq-item">
+        <details>
+          <summary>What is the difference between GVM and Payload?</summary>
+          <p><strong>GVM (Gross Vehicle Mass)</strong> is the maximum legal weight of your vehicle when fully loaded. <strong>Payload</strong> is the weight you can add to the vehicle (passengers, accessories, fuel, and cargo). Put simply: <em>Curb Weight + Payload = GVM</em>. This calculator helps you see if your payload exceeds the GVM limit.</p>
+        </details>
+      </div>
+
+      <div class="faq-item">
+        <details>
+          <summary>Does tow ball weight count towards my GVM?</summary>
+          <p><strong>Yes, absolutely.</strong> The downward weight of your caravan or trailer on the tow ball (Tow Ball Mass) is considered as vehicle "payload" and acts as a heavy weight on your rear axle. While this tool does not calculate GCM (total combination weight), you can add your tow ball weight as an accessory to see how it affects your GVM and rear axle load.</p>
+        </details>
+      </div>
+
+      <div class="faq-item">
+        <details>
+          <summary>Does a suspension upgrade automatically increase my GVM?</summary>
+          <p>No. Installing heavier springs or shocks improves load-carrying ability and reduces sag, but it does <strong>not</strong> legally change your GVM. To legally carry more weight, you must have a certified <strong>GVM Upgrade</strong> plate fitted by an approved engineer. This calculator is perfect for determining if you need to pursue a GVM upgrade.</p>
+        </details>
+      </div>
+
+      <div class="faq-item">
+        <details>
+          <summary>Why is Rear Axle Load important?</summary>
+          <p>Many 4WDs exceed their <strong>Rear Axle Capacity</strong> before they hit their total GVM limit. This happens due to the "cantilever effect" of heavy items behind the rear wheels (like drawers, fridges, spare wheel carriers, and tow ball weight). This tool calculates that leverage to warn you if your rear axle is overloaded.</p>
+        </details>
+      </div>
+
+      <div class="more-link">
+        <p>Need more details? <a href="https://www.projectgvm.com.au/FAQ" target="_blank">Visit our full FAQ Page</a></p>
+      </div>
+    </div>
+  </div>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://www.projectgvm.com.au/about" target="_blank">ABOUT</a>
+    <span class="footer-separator">|</span>
+    
+    <a href="https://www.projectgvm.com.au/about#h.hbevz7u1cblr" target="_blank">CONTACT US</a>
+    <span class="footer-separator">|</span>
+
+    <a href="https://www.projectgvm.com.au/disclaimer" target="_blank">DISCLAIMER</a>
+    <span class="footer-separator">|</span>
+
+    <a href="https://www.projectgvm.com.au/privacy-policy" target="_blank">PRIVACY POLICY</a>
+    <span class="footer-separator">|</span>
+       
+    <a href="https://www.projectgvm.com.au/Terms-and-Conditions" target="_blank">TERMS AND CONDITIONS</a>
+  </div>
+
+  <div class="footer-copyright">
+    &copy; 2025-<span id="year"></span> Project GVM. All rights reserved.
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</div>
+
+<script>
+  // DOM Elements
+  const checkbox = document.getElementById("acknowledge");
+  const button = document.getElementById("startBtn");
+  const appContainer = document.getElementById("app-container");
+  const iframe = document.getElementById("gvm-frame");
+  const loader = document.getElementById("loader");
+  const introContent = document.querySelector(".seo-content");
+  const seoFooter = document.querySelector(".seo-footer"); 
+  
+  const APP_URL = "https://gvmcalculator.streamlit.app/?embed=true&theme=light";
+
+  // 1. Checkbox Logic
+checkbox.addEventListener("change", () => {
+  button.disabled = !checkbox.checked;
+  if(checkbox.checked){
+    gtag('event', 'disclaimer_checkbox_checked', {
+      'event_category': 'GVM Calculator',
+      'event_label': 'Disclaimer Checkbox',
+      'value': 1
+    });
+  }
+});
+
+
+  // 2. Start Button Logic
+button.addEventListener("click", () => {
+  gtag('event', 'start_calculator_clicked', {
+    'event_category': 'GVM Calculator',
+    'event_label': 'Start Calculator',
+    'value': 1
+  });
+
+  introContent.style.display = "none";
+  seoFooter.style.display = "none";
+  appContainer.style.display = "block";
+
+  document.querySelector(".gvm-wrapper").classList.add("app-active");
+  iframe.src = APP_URL;
+  window.scrollTo({ top: 0 });
+
+  // Optional: micro-feedback
+  button.textContent = "Loading your vehicle...";
+  button.disabled = true;
+});
+
+
+
+  // 3. Hide Spinner on Load
+iframe.addEventListener("load", () => {
+  setTimeout(() => {
+    loader.style.display = "none";
+    gtag('event', 'iframe_loaded', {
+      'event_category': 'GVM Calculator',
+      'event_label': 'Calculator Loaded'
+    });
+  }, 1000);
+});
+
+document.querySelectorAll('.faq-item details').forEach(faq => {
+  faq.addEventListener('toggle', e => {
+    if(faq.open){
+      gtag('event', 'faq_opened', {
+        'event_category': 'GVM Calculator',
+        'event_label': faq.querySelector('summary').textContent
+      });
+    }
+  });
+});
+
+
+</script>
+
+
+</body>
+</html>

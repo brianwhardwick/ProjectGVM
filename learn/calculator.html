@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the Calculator Works</title>
+    <meta name="description" content="Meet the engineer behind Project GVM. Learn the history of the free 4WD weight calculator.">
+    <link rel="icon" href="/assets/img/brand/favicon-32x32.svg" type="image/png">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    
+</head>
+
+
+    
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <div class="main-header">
+        <h1>How the Calculator Works</h1>
+            <p>
+                Discover how our calculator instantly accounts for accessories, passengers, and tow ball mass.
+            </p>
+    </div>
+
+    <div class="main-wrapper">
+    
+        <div class="container">
+            
+            <section class="card">
+
+                <h2>The Engineering Behind the Tool</h2>
+                <p>
+                    We believe in transparency. When you are planning a build that involves vehicle safety and legal compliance, you shouldn't have to trust a "black box" that just spits out a number.
+                </p>
+                <p>
+                    This page explains exactly how our 4WD GVM Calculator works, the physics equations we use, and the assumptions we make to generate your results.
+                </p>
+
+
+                <h3>1. The Starting Point: Factory Data</h3>
+
+                <figure class="article-image">
+                    <img src="/assets/img/content/200_axles.jpg" alt="Toyota 200 Series Landcruiser Stock Axle Weights">
+                    <figcaption style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 5px;">
+                        Example Axle Loading
+                    </figcaption>
+                </figure>
+                
+                <p>
+                    Every calculation starts with the vehicle's "Base State." We pull this data directly from manufacturer specifications.
+                </p>
+                <ul>
+                    <li><strong>Tare Weight:</strong> The weight of the empty vehicle.</li>
+                    <li><strong>OEM Axle Weights:</strong> How much of that empty weight sits on the front wheels vs. the rear wheels.</li>
+                    <li><strong>Wheelbase:</strong> The precise distance between the front and rear axles (critical for the leverage math).</li>
+                </ul>
+
+
+
+                <h3>2. The Physics: "Moments" and Leverage</h3>
+                <p>
+                    This is where our calculator differs from a simple spreadsheet sum. We don't just add weight; we calculate where that weight is placed.
+                </p>
+                <p>
+                    The calculator uses the Principle of Moments to determine how a load distributes across your axles.
+                </p>
+                <p>
+                    <strong>The Logic:</strong> We measure the distance of every accessory (bullbar, fridge, tow ball) from the Front Axle.
+                </p>
+                <ul>
+                    <li><strong>Between the Axles:</strong> If you place weight between the wheels (e.g., a driver), the weight is shared between the front and rear axles.</li>
+                    <li><strong>On the Axle:</strong> If you place weight directly on top of the rear axle, 100% of that weight goes to the rear axle.</li>
+                    <li><strong>Behind the Axle (The Cantilever):</strong> If you place weight behind the rear axle (e.g., a tow ball or spare wheel), the calculator applies a leverage ratio.</li>
+                </ul>
+                <p>
+                    <strong>The "See-Saw" Effect:</strong> Because of this leverage, adding weight to the rear overhang does two things:
+                </p>
+                <ul>
+                    <li>It adds more than the item's actual weight to the rear axle.</li>
+                    <li>It lifts weight off the front axle (reducing steering traction).</li>
+                </ul>
+                <p>
+                    Example in the calculator: If you add a 300kg load to the tow ball (on a typical dual cab), the math might look like this:
+                </p>
+                <ul>
+                    <li><strong>Rear Axle:</strong> +420kg</li>
+                    <li><strong>Front Axle:</strong> -120kg (Lifted)</li>
+                    <li><strong>Total GVM:</strong> +300kg</li>
+                </ul>
+                <p>
+                    Our tool handles this math for every single item you select.
+                </p>
+
+
+
+                <h3>3. Accessory Data &amp; Assumptions</h3>
+                
+                <figure class="article-image">
+                    <img src="/assets/img/content/calc-mods.jpg" alt="Example GVM Calculator Weight Inputs">
+                    <figcaption style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 5px;">
+                        Example GVM Calculator Weight Inputs
+                    </figcaption>
+                </figure>
+                
+
+                <p>
+                    Since we can't weigh your specific bullbar, we use as much company report weights for each brand and model.
+                </p>
+                <p>
+                    All inputs can be adjusted by the user as they research their components to ensure the best inputs.
+                </p>
+                
+                <p><strong>Fuel:</strong> Calculated at 0.83kg per litre (approximate density of diesel).</p>
+                <p><strong>Passengers:</strong> We assume a standard adult weighs 85kg. You can adjust this in the "Occupants" section if your setup differs.</p>
+                <p>
+                <strong>"The Driver" Factor:</strong> Many manufacturers calculate "Kerb Weight" with a full tank of fuel but no driver. Our calculator adds the driver by default (because 4WDs don't drive themselves!). This is why your baseline weight might look higher here than in the brochure - it’s more realistic.
+                </p>
+            
+
+
+
+                <h3>4. GVM Upgrades</h3>
+                
+                <figure class="article-image">
+                    <img src="/assets/img/content/calc-gvmu.jpg" alt="Example GVM Calculator GVM Upgrade Inputs">
+                    <figcaption style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 5px;">
+                        Example GVM Calculator GVM Upgrade Inputs
+                    </figcaption>
+                </figure>
+                                
+                <p>
+                    If you select a suspension upgrade from the dropdown list, the calculator replaces the factory limits with the Certified Limits provided by that suspension manufacturer.
+                </p>
+                <p>
+                    <strong>Note:</strong> We assume the "Tare Weight" of the vehicle remains the same, but the Legal Limit (the red line in the diagram) moves up.
+                </p>
+
+                <h3>5. Disclaimer on Accuracy</h3>
+                <p>
+                    While this calculator uses robust physics and accurate database values, it is a simulation.
+                </p>
+                <ul>
+                    <li>Manufacturing tolerances can vary the weight of your base vehicle by +/- 5%.</li>
+                    <li>Custom fabrication (trays, canopies) can vary wildly in weight.</li>
+                    <li>Mud, dust, and accumulated gear add up over time.</li>
+                </ul>
+                <p>
+                    <strong>The Golden Rule:</strong> Use this calculator to plan your build, but always use a Certified Weighbridge to confirm your compliance.
+                </p>
+            </section>
+
+            </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>
