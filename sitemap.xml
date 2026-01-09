@@ -53,15 +53,15 @@
 
   <!-- Legal documents -->
   <url>
-    <loc>https://www.projectgvm.com.au/terms-and-conditions/</loc>
+    <loc>https://www.projectgvm.com.au/notices/terms/</loc>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/privacy-policy/</loc>
+    <loc>https://www.projectgvm.com.au/notices/privacy/</loc>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/disclaimer/</loc>
+    <loc>https://www.projectgvm.com.au/notices/disclaimer/</loc>
     <priority>0.50</priority>
   </url>
 
