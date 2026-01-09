@@ -9,59 +9,59 @@
 
   <!-- Calculator (on main domain redirects to subdomain) -->
   <url>
-    <loc>https://www.projectgvm.com.au/calculator</loc>
+    <loc>https://www.projectgvm.com.au/calculator/</loc>
     <priority>1.00</priority>
   </url>
 
   <!-- Learn / Resources -->
   <url>
-    <loc>https://www.projectgvm.com.au/learn/how-the-calculator-works</loc>
+    <loc>https://www.projectgvm.com.au/learn/how-the-calculator-works/</loc>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/understanding-gvm</loc>
+    <loc>https://www.projectgvm.com.au/learn/understanding-gvm/</loc>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/weight-compliance-tips</loc>
+    <loc>https://www.projectgvm.com.au/learn/weight-compliance-tips/</loc>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/towing-safely</loc>
+    <loc>https://www.projectgvm.com.au/learn/towing-safely/</loc>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/top-accessories</loc>
+    <loc>https://www.projectgvm.com.au/learn/top-accessories/</loc>
     <priority>0.70</priority>
   </url>
 
   <!-- FAQ -->
   <url>
-    <loc>https://www.projectgvm.com.au/faqs</loc>
+    <loc>https://www.projectgvm.com.au/faqs/</loc>
     <priority>0.90</priority>
   </url>
 
   <!-- Secondary pages -->
   <url>
-    <loc>https://www.projectgvm.com.au/about</loc>
+    <loc>https://www.projectgvm.com.au/about/</loc>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/contact</loc>
+    <loc>https://www.projectgvm.com.au/contact/</loc>
     <priority>0.70</priority>
   </url>
 
   <!-- Legal documents -->
   <url>
-    <loc>https://www.projectgvm.com.au/terms-and-conditions</loc>
+    <loc>https://www.projectgvm.com.au/terms-and-conditions/</loc>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/privacy-policy</loc>
+    <loc>https://www.projectgvm.com.au/privacy-policy/</loc>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/disclaimer</loc>
+    <loc>https://www.projectgvm.com.au/disclaimer/</loc>
     <priority>0.50</priority>
   </url>
 
