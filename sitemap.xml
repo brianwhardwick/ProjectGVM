@@ -7,7 +7,7 @@
     <priority>1.00</priority>
   </url>
 
-  <!-- Calculator (on main domain redirects to subdomain) -->
+  <!-- Calculator -->
   <url>
     <loc>https://www.projectgvm.com.au/calculator/</loc>
     <priority>1.00</priority>
