@@ -23,44 +23,6 @@ const GVMApp = (function() {
         }
     };
 
-    // --- 2. Shared Component Loader (The "GitHub Pages Fix") ---
-    
-    /**
-     * Injects header and footer into the page.
-     * Uses path-prefixing to handle subfolder nesting.
-     */
-    const loadSharedComponents = async () => {
-        const components = [
-            { id: config.selectors.headerPlaceholder, file: 'header.html' },
-            { id: config.selectors.footerPlaceholder, file: 'footer.html' }
-        ];
-
-        // Determine if we are in a subfolder (e.g., /about/)
-        // GitHub Pages uses the path to define folders. 
-        // If pathname has more than one segment, we likely need to go up a level.
-        const pathSegments = window.location.pathname.split('/').filter(p => p && !p.includes('.html'));
-        const pathPrefix = pathSegments.length > 0 ? '../' : './';
-
-        for (const item of components) {
-            const el = document.querySelector(item.id);
-            if (el) {
-                try {
-                    const response = await fetch(pathPrefix + item.file);
-                    if (!response.ok) throw new Error(`Could not find ${item.file}`);
-                    const html = await response.text();
-                    el.innerHTML = html;
-
-                    // If we just loaded the footer, start the year script
-                    if (item.id === config.selectors.footerPlaceholder) {
-                        initDynamicYear();
-                    }
-                } catch (err) {
-                    console.warn("Component load failed:", err);
-                }
-            }
-        }
-    };
-
     // --- 3. UI Methods ---
 
     const initDynamicYear = () => {
@@ -207,3 +169,4 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
+
