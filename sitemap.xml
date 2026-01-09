@@ -15,11 +15,11 @@
 
   <!-- Learn / Resources -->
   <url>
-    <loc>https://www.projectgvm.com.au/learn/how-the-calculator-works/</loc>
+    <loc>https://www.projectgvm.com.au/learn/calculator/</loc>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/understanding-gvm/</loc>
+    <loc>https://www.projectgvm.com.au/learn/gvm-gcm/</loc>
     <priority>0.70</priority>
   </url>
   <url>
@@ -27,11 +27,11 @@
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/towing-safely/</loc>
+    <loc>https://www.projectgvm.com.au/learn/towing/</loc>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/learn/top-accessories/</loc>
+    <loc>https://www.projectgvm.com.au/learn/accessories/</loc>
     <priority>0.70</priority>
   </url>
 
@@ -47,7 +47,7 @@
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.projectgvm.com.au/contact/</loc>
+    <loc>https://www.projectgvm.com.au/about/#contact/</loc>
     <priority>0.70</priority>
   </url>
 
