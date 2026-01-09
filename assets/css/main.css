@@ -85,7 +85,14 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 
 
+.no-style-link {
+    color: inherit;          /* keep same as surrounding text */
+    text-decoration: none;   /* remove underline */
+}
 
+.no-style-link:hover {
+    color: inherit;          /* prevent color change on hover */
+}
 
 
 
@@ -1215,3 +1222,4 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
