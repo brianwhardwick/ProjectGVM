@@ -84,7 +84,6 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 
 
-
 .no-style-link {
     color: inherit;          /* keep same as surrounding text */
     text-decoration: none;   /* remove underline */
@@ -93,6 +92,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 .no-style-link:hover {
     color: inherit;          /* prevent color change on hover */
 }
+
 
 
 
@@ -322,7 +322,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 img.hero-logo {
   width: 100%;           
-  max-width: 500px;      
+  max-width: 300px;      
   height: auto;          
   margin-bottom: 30px;
   display: block;
@@ -331,7 +331,7 @@ img.hero-logo {
 .hero-button {
   display: inline-block;
   padding: 16px 32px;
-  background: var(--color-white);
+  background: var(--color-secondary);
   color: var(--color-text-main);
   font-weight: 700;
   font-size: 1.5rem;
@@ -374,7 +374,7 @@ img.hero-logo {
 
 .hero-quote {
   font-size: 1.25rem;
-  line-height: 1.6;
+  line-height: 1.26;
   font-style: italic;
   font-weight: 500;
   margin-bottom: 20px;
@@ -387,6 +387,18 @@ img.hero-logo {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.hero-quote-list {
+  list-style-type: disc; /* standard dot bullets */
+  padding-left: 1.5rem;  /* space for bullets */
+  margin: 0 0 0px 0;    /* spacing similar to hero-quote */
+  font-size: 1.55rem;    /* same size as quote text */
+  line-height: 1.4;      /* match quote spacing */
+}
+
+.hero-quote-list li {
+  margin-bottom: 0.5rem; /* space between list items */
 }
 
 /* --- UPDATED MOBILE RESPONSIVENESS --- */
@@ -462,6 +474,7 @@ img.hero-logo {
 /* Blog Section */
 .blog-section h2 {
   margin-bottom: 20px;
+  
 }
 
 .blog-grid {
@@ -509,7 +522,7 @@ img.hero-logo {
 }
 
 .blog-card .btn:hover {
-  background: #b71c1c;
+  background: #b7741c;
 }
 
 /* Resources Section */
@@ -554,10 +567,20 @@ img.hero-logo {
   border-radius: 4px;
 }
 
+
+
 /* Responsive */
 @media (max-width: 900px) {
-  .container {
+  /* 1. Fix: Matches the class name defined at the top (.home-container) */
+  .home-container {
     grid-template-columns: 1fr;
+  }
+
+  /* 2. New: Target the sidebar and move it to the top */
+  /* Assuming the sidebar is the second direct child of .home-container */
+  .home-container > :nth-child(2) {
+    order: -1; 
+    margin-bottom: 30px; /* Adds spacing between aside and cards */
   }
 
   .blog-grid {
@@ -565,13 +588,18 @@ img.hero-logo {
   }
 }
 
+
+/* Responsive */
 @media (max-width: 600px) {
+  /* 1. Fix: Matches the class name defined at the top (.home-container) */
+  .home-container {
+    grid-template-columns: 1fr;
+  }
+
   .blog-grid {
     grid-template-columns: 1fr;
   }
 }
-
-
 
 
 
@@ -1222,4 +1250,3 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
-
