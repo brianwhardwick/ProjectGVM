@@ -132,29 +132,26 @@ const GVMApp = (function() {
 
     /**
      * Injects header and footer into the page.
-     * Uses path-prefixing to handle subfolder nesting.
+     * Uses absolute paths to ensure they load from any subfolder.
      */
     const loadSharedComponents = async () => {
+        // FIXED: Added full paths to the assets folder
         const components = [
-            { id: config.selectors.headerPlaceholder, file: 'header.html' },
-            { id: config.selectors.footerPlaceholder, file: 'footer.html' }
+            { id: config.selectors.headerPlaceholder, file: '/assets/components/header.html' },
+            { id: config.selectors.footerPlaceholder, file: '/assets/components/footer.html' }
         ];
-
-        // Determine path prefix (for subfolders)
-        const pathSegments = window.location.pathname.split('/').filter(p => p && !p.includes('.html'));
-        const pathPrefix = pathSegments.length > 0 ? '../' : './';
 
         for (const item of components) {
             const el = document.querySelector(item.id);
             if (el) {
                 try {
-                    const response = await fetch(pathPrefix + item.file);
+                    // Removed complex relative path logic in favor of absolute paths
+                    const response = await fetch(item.file);
+                    
                     if (!response.ok) throw new Error(`Could not find ${item.file}`);
                     const html = await response.text();
                     el.innerHTML = html;
 
-                    // --- NEW CODE STARTS HERE ---
-                    
                     // 1. If we just loaded the header, highlight the active link
                     if (item.id === config.selectors.headerPlaceholder) {
                         highlightActiveLink();
@@ -164,8 +161,6 @@ const GVMApp = (function() {
                     if (item.id === config.selectors.footerPlaceholder) {
                         initDynamicYear();
                     }
-                    
-                    // --- NEW CODE ENDS HERE ---
 
                 } catch (err) {
                     console.warn("Component load failed:", err);
@@ -175,21 +170,20 @@ const GVMApp = (function() {
     };
 
     /**
-     * NEW FUNCTION: Checks the URL and highlights the correct menu item
+     * Checks the URL and highlights the correct menu item
      */
     const highlightActiveLink = () => {
         const currentPath = window.location.pathname.replace(/\/$/, ""); // Normalize: remove trailing slash
         const navLinks = document.querySelectorAll('.nav-links');
 
         navLinks.forEach(link => {
-            const linkHref = link.getAttribute('href').replace(/\/$/, ""); // Normalize: remove trailing slash
+            const linkHref = link.getAttribute('href').replace(/\/$/, ""); 
 
             // Logic 1: Exact Match (e.g., Home, Calculator, About)
             if (currentPath === linkHref || (currentPath === "" && linkHref === "")) {
                 link.classList.add('active');
             } 
             // Logic 2: "Learn" Section Handling
-            // (Since your "Learn" link points to /learn/calculator/ but you have other pages like /learn/towing/)
             else if (currentPath.includes("/learn") && linkHref.includes("/learn")) {
                 link.classList.add('active');
             }
