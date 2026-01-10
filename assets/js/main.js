@@ -196,35 +196,6 @@ const GVMApp = (function() {
         });
     };
     
-    
-    
-    
-    
-    // *** Links Header & Footer *** //
-    document.addEventListener("DOMContentLoaded", function() {
-        // Function to load HTML components
-        function loadComponent(elementId, componentPath) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                fetch(componentPath)
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to load component");
-                        return response.text();
-                    })
-                    .then(data => {
-                        element.innerHTML = data;
-                    })
-                    .catch(error => console.error('Error loading component:', error));
-            }
-        }
-    
-        // Load the header and footer
-        // Note: Adjust the paths if your folder structure differs
-        loadComponent("header-placeholder", "/assets/components/header.html");
-        loadComponent("footer-placeholder", "/assets/components/footer.html");
-    });
-
-    
     // --- 5. Public Init ---
     return {
         init: function() {
@@ -240,6 +211,3 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
-
-
-
