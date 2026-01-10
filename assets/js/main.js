@@ -200,8 +200,6 @@ const GVMApp = (function() {
     
     
     
-    
-    /*
     // *** Links Header & Footer *** //
     document.addEventListener("DOMContentLoaded", function() {
         // Function to load HTML components
@@ -225,7 +223,7 @@ const GVMApp = (function() {
         loadComponent("header-placeholder", "/assets/components/header.html");
         loadComponent("footer-placeholder", "/assets/components/footer.html");
     });
-*/
+
     
     // --- 5. Public Init ---
     return {
@@ -242,5 +240,6 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
+
 
 
