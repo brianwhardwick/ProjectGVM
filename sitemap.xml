@@ -1,72 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <!-- Main pages -->
-  <url>
-    <loc>https://www.projectgvm.com.au/</loc>
-    <priority>1.00</priority>
-  </url>
-
-  <!-- Calculator -->
-  <url>
-    <loc>https://www.projectgvm.com.au/calculator/</loc>
-    <priority>1.00</priority>
-  </url>
-
-  <!-- Learn / Resources -->
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/calculator/</loc>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/gvm-gcm/</loc>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/weighbridge/</loc>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/towing/</loc>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/accessories/</loc>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/learn/airbags/</loc>
-    <priority>0.70</priority>
-  </url>
-
-  <!-- FAQ -->
-  <url>
-    <loc>https://www.projectgvm.com.au/faq/</loc>
-    <priority>0.90</priority>
-  </url>
-
-  <!-- Secondary pages -->
-  <url>
-    <loc>https://www.projectgvm.com.au/about/</loc>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/about/#contact/</loc>
-    <priority>0.70</priority>
-  </url>
-
-  <!-- Legal documents -->
-  <url>
-    <loc>https://www.projectgvm.com.au/notices/terms/</loc>
-    <priority>0.50</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/notices/privacy/</loc>
-    <priority>0.50</priority>
-  </url>
-  <url>
-    <loc>https://www.projectgvm.com.au/notices/disclaimer/</loc>
-    <priority>0.50</priority>
-  </url>
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://your-website-domain.com/</loc>
+<lastmod>2026-01-12T08:01:56+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/about/</loc>
+<lastmod>2026-01-09T14:32:19+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/calculator/</loc>
+<lastmod>2026-01-11T19:45:45+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/faq/</loc>
+<lastmod>2026-01-09T14:04:57+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/accessories/</loc>
+<lastmod>2026-01-09T14:00:52+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/airbags/</loc>
+<lastmod>2026-01-09T14:00:22+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/calculator/</loc>
+<lastmod>2026-01-09T13:52:28+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/gvm-gcm/</loc>
+<lastmod>2026-01-09T14:02:19+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/towing/</loc>
+<lastmod>2026-01-09T14:02:46+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/learn/weighbridge/</loc>
+<lastmod>2026-01-11T08:55:16+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/notices/disclaimer/</loc>
+<lastmod>2026-01-09T15:03:49+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/notices/privacy/</loc>
+<lastmod>2026-01-09T15:04:15+11:00</lastmod>
+</url>
+<url>
+<loc>https://your-website-domain.com/notices/terms/</loc>
+<lastmod>2026-01-09T15:05:03+11:00</lastmod>
+</url>
 </urlset>
