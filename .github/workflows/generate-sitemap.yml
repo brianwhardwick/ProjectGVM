@@ -1,0 +1,47 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main  # Change this if your default branch is named 'master'
+    paths:
+      - '**/*.html' # Only run when HTML files change
+      - '**/*.pdf'  # Optional: Include other file types you want in the sitemap
+
+jobs:
+  sitemap_job:
+    runs-on: ubuntu-latest
+    name: Generate and Commit Sitemap
+
+    steps:
+    - name: Checkout the repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 
+
+    - name: Generate Sitemap
+      uses: cicirello/generate-sitemap@v1
+      with:
+        # Base URL of your website (REQUIRED)
+        base-url-path: 'https://www.projectgvm.com.au'
+        
+        # Exclude specific files
+        exclude-paths: |
+          /assets/
+          404.html
+          /css/
+          /js/
+          CNAME
+          robots.txt
+        
+        # Output file name (default is sitemap.xml)
+        path-to-root: .
+        
+        # strictly include only files with these extensions
+        include-extensions: .html .pdf
+
+    - name: Commit and Push Sitemap
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Automated sitemap update"
+        file_pattern: sitemap.xml
