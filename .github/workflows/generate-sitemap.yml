@@ -3,10 +3,10 @@ name: Generate Sitemap
 on:
   push:
     branches:
-      - main  # Change this if your default branch is named 'master'
+      - main  # Change this if your default branch is 'master'
     paths:
-      - '**/*.html' # Only run when HTML files change
-      - '**/*.pdf'  # Optional: Include other file types you want in the sitemap
+      - '**/*.html'
+      - '**/*.pdf'
 
 jobs:
   sitemap_job:
@@ -22,8 +22,8 @@ jobs:
     - name: Generate Sitemap
       uses: cicirello/generate-sitemap@v1
       with:
-        # Base URL of your website (REQUIRED)
-        base-url-path: 'https://www.projectgvm.com.au'
+        # Base URL of your website (REQUIRED) - CHANGE THIS
+        base-url-path: 'https://your-website-domain.com'
         
         # Exclude specific files
         exclude-paths: |
@@ -34,11 +34,12 @@ jobs:
           CNAME
           robots.txt
         
-        # Output file name (default is sitemap.xml)
+        # Output file location
         path-to-root: .
         
-        # strictly include only files with these extensions
-        include-extensions: .html .pdf
+        # Corrected inputs for file types
+        include-html: true
+        include-pdf: true
 
     - name: Commit and Push Sitemap
       uses: stefanzweifel/git-auto-commit-action@v5
