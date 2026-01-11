@@ -7,7 +7,10 @@ on:
     paths:
       - '**/*.html'
       - '**/*.pdf'
-
+      
+permissions:
+  contents: write
+  
 jobs:
   sitemap_job:
     runs-on: ubuntu-latest
