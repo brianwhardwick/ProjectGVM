@@ -1,51 +1,88 @@
-name: Generate Sitemap
+name: Auto-SEO & Sitemap
 
 on:
   push:
     branches:
-      - main  # Change this if your default branch is 'master'
+      - main
     paths:
       - '**/*.html'
       - '**/*.pdf'
-      
+
 permissions:
   contents: write
-  
+
 jobs:
-  sitemap_job:
+  seo_and_sitemap:
     runs-on: ubuntu-latest
-    name: Generate and Commit Sitemap
+    name: SEO Updates & Sitemap Generation
 
     steps:
-    - name: Checkout the repo
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Generate Sitemap
-      uses: cicirello/generate-sitemap@v1
-      with:
-        # Base URL of your website (REQUIRED) - CHANGE THIS
-        base-url-path: 'https://www.projectgvm.com.au'
-        
-        # Exclude specific files
-        exclude-paths: |
-          /assets/
-          404.html
-          /css/
-          /js/
-          CNAME
-          robots.txt
-        
-        # Output file location
-        path-to-root: .
-        
-        # Corrected inputs for file types
-        include-html: true
-        include-pdf: true
+      # --- STEP 1: Identify which HTML files changed ---
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **.html
 
-    - name: Commit and Push Sitemap
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "Automated sitemap update"
-        file_pattern: sitemap.xml
+      # --- STEP 2: Update Schema Dates & Canonicals ---
+      - name: Update SEO Dates & Canonicals
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          NEW_DATE=$(date +'%Y-%m-%d')
+          BASE_URL="https://www.projectgvm.com.au"
+
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Processing SEO for: $file"
+
+            # 1. Update Schema Date
+            # Finds "dateModified": "YYYY-MM-DD" and updates it to today
+            sed -i "s/\"dateModified\": \".*\"/\"dateModified\": \"$NEW_DATE\"/g" "$file"
+
+            # 2. Update Canonical URL (Only for index.html files)
+            if [[ "$file" == *"index.html" ]]; then
+              
+              # Calculate folder path (e.g., learn/towing) relative to root
+              DIR_PATH=$(dirname "$file")
+              
+              # If root, path is empty. Otherwise add slash.
+              if [ "$DIR_PATH" == "." ]; then
+                  FINAL_PATH=""
+              else
+                  FINAL_PATH="$DIR_PATH/"
+              fi
+              
+              CORRECT_URL="$BASE_URL/$FINAL_PATH"
+              
+              # Update the <link rel="canonical"> tag
+              sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
+            fi
+          done
+
+      # --- STEP 3: Generate Sitemap (Now includes updated files) ---
+      - name: Generate Sitemap
+        uses: cicirello/generate-sitemap@v1
+        with:
+          base-url-path: 'https://www.projectgvm.com.au'
+          exclude-paths: |
+            /assets/
+            404.html
+            /css/
+            /js/
+            CNAME
+            robots.txt
+          path-to-root: .
+          include-html: true
+          include-pdf: true
+
+      # --- STEP 4: Commit Everything (HTML + XML) ---
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-SEO: HTML dates updated + Sitemap regen [skip ci]"
+          # Note: file_pattern was removed so it commits ALL changed files (HTML + XML)
