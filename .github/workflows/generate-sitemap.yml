@@ -1,12 +1,16 @@
 name: Auto-SEO & Sitemap
 
 on:
+  # Trigger 1: Run automatically when you push HTML changes
   push:
     branches:
       - main
     paths:
       - '**/*.html'
       - '**/*.pdf'
+
+  # Trigger 2: Manual Button (To force-update/fix all files)
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -22,15 +26,43 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
+      # --- Step 1: Determine files to process ---
+      - name: Get Files to Process
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual Run: Processing ALL HTML files."
+            # Find all HTML files, exclude .git, replace newlines with spaces
+            ALL_FILES=$(find . -name "*.html" -not -path "./.git/*" | tr '\n' ' ')
+            echo "list=$ALL_FILES" >> $GITHUB_OUTPUT
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Push detected: checking for changes..."
+            # We will rely on the next step for changed files
+          fi
+
+      - name: Get changed files (Push Only)
+        if: github.event_name == 'push'
         id: changed-files
         uses: tj-actions/changed-files@v44
         with:
           files: |
             **.html
 
-      - name: Run Safe SEO Script (Python)
-        if: steps.changed-files.outputs.any_changed == 'true'
+      - name: Combine File Lists
+        id: final_list
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+             echo "files=${{ steps.target.outputs.list }}" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.changed-files.outputs.any_changed }}" == "true" ]; then
+             echo "files=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
+          else
+             echo "files=" >> $GITHUB_OUTPUT
+          fi
+
+      # --- Step 2: Run The Fixed Python Script ---
+      - name: Run Safe SEO Script
+        if: steps.final_list.outputs.files != ''
         run: |
           python3 -c "
           import os
@@ -40,30 +72,20 @@ jobs:
 
           # --- CONFIGURATION ---
           BASE_URL = 'https://www.projectgvm.com.au'
-          changed_files = '${{ steps.changed-files.outputs.all_changed_files }}'.split(' ')
+          file_list_str = '${{ steps.final_list.outputs.files }}'
+          target_files = file_list_str.split(' ')
           TODAY = datetime.now().strftime('%Y-%m-%d')
 
-          def safe_replace(content, pattern, replacement):
-              return re.sub(pattern, replacement, content)
-
           def update_meta_tag(content, property_name, new_value, is_name=False):
-              # Handles both <meta property='...'> and <meta name='...'>
               attr = 'name' if is_name else 'property'
-              # Sanitize new value for HTML
               safe_val = new_value.replace('\"', '&quot;')
-              
-              # Regex to find existing tag
               pattern = re.compile(f'(<meta\\s+{attr}=\"{property_name}\"\\s+content=\")(.*?)(\")', re.IGNORECASE)
-              
               if pattern.search(content):
                   return pattern.sub(f'\\g<1>{safe_val}\\g<3>', content)
-              else:
-                  # If missing, we don't insert blindly to avoid breaking structure. 
-                  # We only update existing tags for safety.
-                  return content
+              return content
 
           def process_file(file_path):
-              if not os.path.exists(file_path): return
+              if not file_path or not os.path.exists(file_path): return
               
               print(f'Processing: {file_path}')
               with open(file_path, 'r', encoding='utf-8') as f:
@@ -72,7 +94,6 @@ jobs:
               content = original_content
 
               # 1. UPDATE SCHEMA DATES
-              # Looks for \"dateModified\": \"YYYY-MM-DD\"
               content = re.sub(r'(\"dateModified\": \")(\d{4}-\d{2}-\d{2})(\")', f'\\g<1>{TODAY}\\g<3>', content)
 
               # 2. SYNC TITLE TO META TAGS
@@ -94,10 +115,11 @@ jobs:
                   content = re.sub(r'(\"description\": \")(.*?)(\")', f'\\g<1>{page_desc}\\g<3>', content)
 
               # 4. BREADCRUMBS & CANONICALS (Only for non-root files)
-              if file_path.endswith('index.html') and file_path != 'index.html':
-                  # Calculate URL
-                  parts = os.path.dirname(file_path).split('/')
-                  if parts != ['']:
+              if file_path.endswith('index.html') and file_path != 'index.html' and file_path != './index.html':
+                  parts = os.path.dirname(file_path).replace('./', '').split('/')
+                  parts = [p for p in parts if p] # Filter empty
+                  
+                  if parts:
                       rel_path = '/'.join(parts) + '/'
                       full_url = f'{BASE_URL}/{rel_path}'
                       
@@ -112,10 +134,8 @@ jobs:
                           '@type': 'BreadcrumbList',
                           'itemListElement': []
                       }
-                      # Add Home
                       breadcrumbs['itemListElement'].append({'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE_URL}/'})
                       
-                      # Add Parts
                       curr = ''
                       for i, part in enumerate(parts):
                           curr += part + '/'
@@ -131,22 +151,26 @@ jobs:
                           })
                       
                       json_str = json.dumps(breadcrumbs, indent=2)
+                      
+                      # Use Markers to safely replace ONLY the breadcrumb block
                       bc_block = f'\n    <script type=\"application/ld+json\">\n{json_str}\n    </script>\n    '
 
-                      # Remove OLD Breadcrumb block if exists (Robust Regex)
-                      content = re.sub(r'.*?\s*', '', content, flags=re.DOTALL)
-                      
-                      # Insert NEW Breadcrumb block before closing head
-                      content = content.replace('</head>', f'{bc_block}\n</head>')
+                      # Regex to find EXISTING marker block
+                      marker_pattern = re.compile(r'.*?', re.DOTALL)
 
-              # 5. SAFETY CHECK (CRITICAL)
-              # If the file shrank by more than 50% or lost the closing head tag, DO NOT SAVE.
+                      if marker_pattern.search(content):
+                          # Replace existing block
+                          content = marker_pattern.sub(bc_block, content)
+                      else:
+                          # Append new block before closing head if it doesn't exist
+                          content = content.replace('</head>', f'{bc_block}\n</head>')
+
+              # 5. SAFETY CHECKS
               if '</head>' not in content:
-                  print(f'SAFETY ERROR: </head> tag missing in processed content for {file_path}. Skipping save.')
+                  print(f'SAFETY ERROR: </head> tag missing for {file_path}. Skipping.')
                   return
-              
               if len(content) < (len(original_content) * 0.5):
-                  print(f'SAFETY ERROR: Content shrank suspiciously for {file_path}. Skipping save.')
+                  print(f'SAFETY ERROR: Content shrank for {file_path}. Skipping.')
                   return
 
               # 6. WRITE FILE
@@ -156,9 +180,8 @@ jobs:
                   print(f'Successfully updated {file_path}')
 
           # Run Loop
-          for file in changed_files:
-              if file.strip():
-                  process_file(file)
+          for file in target_files:
+              process_file(file.strip())
           "
 
       - name: Generate Sitemap
