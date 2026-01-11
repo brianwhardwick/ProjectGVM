@@ -29,7 +29,7 @@ jobs:
           files: |
             **.html
 
-      - name: Auto-SEO (All Meta Tags)
+      - name: Auto-SEO (All Meta Tags + Schema)
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           NEW_DATE=$(date +'%Y-%m-%d')
@@ -44,21 +44,25 @@ jobs:
             sed -i "s/\"dateModified\": \".*\"/\"dateModified\": \"$NEW_DATE\"/g" "$file"
 
             # -------------------------------------------------------
-            # PART B: Sync <title> to og:title / twitter:title
+            # PART B: Sync Title -> Meta Tags AND Schema Headline
             # -------------------------------------------------------
             PAGE_TITLE=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$file")
             
             if [ -n "$PAGE_TITLE" ]; then
+              # Sanitize (escape | and ") for sed processing
               SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
 
-              # Update or Insert og:title
+              # 1. Update Schema 'headline'
+              sed -i "s|\"headline\": \".*\"|\"headline\": \"$SAFE_TITLE\"|g" "$file"
+
+              # 2. Update/Insert og:title
               if grep -q "property=\"og:title\"" "$file"; then
                 sed -i "s|<meta property=\"og:title\" content=\".*\"|<meta property=\"og:title\" content=\"$SAFE_TITLE\"|g" "$file"
               else
                 sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
               fi
 
-              # Update or Insert twitter:title
+              # 3. Update/Insert twitter:title
               if grep -q "twitter:title" "$file"; then
                 sed -i "s|<meta .*twitter:title.* content=\".*\"|<meta name=\"twitter:title\" content=\"$SAFE_TITLE\"|g" "$file"
               else
@@ -67,34 +71,33 @@ jobs:
             fi
 
             # -------------------------------------------------------
-            # PART C: Sync Description to og:description / twitter:description
+            # PART C: Sync Description -> Meta Tags AND Schema Description
             # -------------------------------------------------------
-            # Extract content from <meta name="description" content="...">
             PAGE_DESC=$(grep '<meta name="description"' "$file" | sed -n 's/.*content="\([^"]*\)".*/\1/p')
 
             if [ -n "$PAGE_DESC" ]; then
-              # Sanitize description (escape | and ")
               SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
 
-              # Update or Insert og:description
+              # 1. Update Schema 'description'
+              sed -i "s|\"description\": \".*\"|\"description\": \"$SAFE_DESC\"|g" "$file"
+
+              # 2. Update/Insert og:description
               if grep -q "property=\"og:description\"" "$file"; then
                  sed -i "s|<meta property=\"og:description\" content=\".*\"|<meta property=\"og:description\" content=\"$SAFE_DESC\"|g" "$file"
               else
-                 # Append after the main description tag
                  sed -i "/<meta name=\"description\"/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
               fi
 
-              # Update or Insert twitter:description
+              # 3. Update/Insert twitter:description
               if grep -q "twitter:description" "$file"; then
                  sed -i "s|<meta .*twitter:description.* content=\".*\"|<meta name=\"twitter:description\" content=\"$SAFE_DESC\"|g" "$file"
               else
-                 # Append after the main description tag
                  sed -i "/<meta name=\"description\"/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
               fi
             fi
 
             # -------------------------------------------------------
-            # PART D: Canonical URL, og:url, twitter:url
+            # PART D: Sync URL -> Canonical, Meta Tags AND Schema @id
             # -------------------------------------------------------
             if [[ "$file" == *"index.html" ]]; then
               
@@ -103,22 +106,23 @@ jobs:
               if [ "$DIR_PATH" == "." ]; then FINAL_PATH=""; else FINAL_PATH="$DIR_PATH/"; fi
               CORRECT_URL="$BASE_URL/$FINAL_PATH"
 
-              # 1. Update Canonical
+              # 1. Update Canonical Link
               sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
 
-              # 2. Update or Insert og:url
+              # 2. Update Schema '@id'
+              sed -i "s|\"@id\": \".*\"|\"@id\": \"$CORRECT_URL\"|g" "$file"
+
+              # 3. Update/Insert og:url
               if grep -q "property=\"og:url\"" "$file"; then
                  sed -i "s|<meta property=\"og:url\" content=\".*\"|<meta property=\"og:url\" content=\"$CORRECT_URL\"|g" "$file"
               else
-                 # Append after canonical link
                  sed -i "/<link rel=\"canonical\"/a \    <meta property=\"og:url\" content=\"$CORRECT_URL\">" "$file"
               fi
 
-              # 3. Update or Insert twitter:url
+              # 4. Update/Insert twitter:url
               if grep -q "twitter:url" "$file"; then
                  sed -i "s|<meta .*twitter:url.* content=\".*\"|<meta name=\"twitter:url\" content=\"$CORRECT_URL\"|g" "$file"
               else
-                 # Append after canonical link
                  sed -i "/<link rel=\"canonical\"/a \    <meta name=\"twitter:url\" content=\"$CORRECT_URL\">" "$file"
               fi
             fi
@@ -143,4 +147,4 @@ jobs:
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-SEO: Synced All Meta Tags & Sitemap [skip ci]"
+          commit_message: "Auto-SEO: Synced Schema, Meta Tags & Sitemap [skip ci]"
