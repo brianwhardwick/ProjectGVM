@@ -29,106 +29,142 @@ jobs:
           files: |
             **.html
 
-      - name: Auto-SEO (All Meta Tags + Schema)
+      # --- STEP 1: Bash Script for Simple Replacements (Dates, Meta Tags, Canonicals) ---
+      - name: Update Meta Tags & Schema Dates
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           NEW_DATE=$(date +'%Y-%m-%d')
           BASE_URL="https://www.projectgvm.com.au"
 
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "Processing SEO for: $file"
+            echo "Processing Meta Tags for: $file"
 
-            # -------------------------------------------------------
-            # PART A: Update Schema Date
-            # -------------------------------------------------------
+            # 1. Update Schema Date
             sed -i "s/\"dateModified\": \".*\"/\"dateModified\": \"$NEW_DATE\"/g" "$file"
 
-            # -------------------------------------------------------
-            # PART B: Sync Title -> Meta Tags AND Schema Headline
-            # -------------------------------------------------------
+            # 2. Sync Title -> Meta Tags & Schema Headline
             PAGE_TITLE=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$file")
-            
             if [ -n "$PAGE_TITLE" ]; then
-              # Sanitize (escape | and ") for sed processing
               SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
-
-              # 1. Update Schema 'headline'
+              
+              # Schema Headline
               sed -i "s|\"headline\": \".*\"|\"headline\": \"$SAFE_TITLE\"|g" "$file"
-
-              # 2. Update/Insert og:title
-              if grep -q "property=\"og:title\"" "$file"; then
-                sed -i "s|<meta property=\"og:title\" content=\".*\"|<meta property=\"og:title\" content=\"$SAFE_TITLE\"|g" "$file"
-              else
-                sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
-              fi
-
-              # 3. Update/Insert twitter:title
-              if grep -q "twitter:title" "$file"; then
-                sed -i "s|<meta .*twitter:title.* content=\".*\"|<meta name=\"twitter:title\" content=\"$SAFE_TITLE\"|g" "$file"
-              else
-                sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"
-              fi
+              # OG Title
+              if grep -q "property=\"og:title\"" "$file"; then sed -i "s|<meta property=\"og:title\" content=\".*\"|<meta property=\"og:title\" content=\"$SAFE_TITLE\"|g" "$file"; else sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"; fi
+              # Twitter Title
+              if grep -q "twitter:title" "$file"; then sed -i "s|<meta .*twitter:title.* content=\".*\"|<meta name=\"twitter:title\" content=\"$SAFE_TITLE\"|g" "$file"; else sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"; fi
             fi
 
-            # -------------------------------------------------------
-            # PART C: Sync Description -> Meta Tags AND Schema Description
-            # -------------------------------------------------------
+            # 3. Sync Description -> Meta Tags & Schema
             PAGE_DESC=$(grep '<meta name="description"' "$file" | sed -n 's/.*content="\([^"]*\)".*/\1/p')
-
             if [ -n "$PAGE_DESC" ]; then
               SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
-
-              # 1. Update Schema 'description'
+              
+              # Schema Description
               sed -i "s|\"description\": \".*\"|\"description\": \"$SAFE_DESC\"|g" "$file"
-
-              # 2. Update/Insert og:description
-              if grep -q "property=\"og:description\"" "$file"; then
-                 sed -i "s|<meta property=\"og:description\" content=\".*\"|<meta property=\"og:description\" content=\"$SAFE_DESC\"|g" "$file"
-              else
-                 sed -i "/<meta name=\"description\"/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
-              fi
-
-              # 3. Update/Insert twitter:description
-              if grep -q "twitter:description" "$file"; then
-                 sed -i "s|<meta .*twitter:description.* content=\".*\"|<meta name=\"twitter:description\" content=\"$SAFE_DESC\"|g" "$file"
-              else
-                 sed -i "/<meta name=\"description\"/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
-              fi
+              # OG Description
+              if grep -q "property=\"og:description\"" "$file"; then sed -i "s|<meta property=\"og:description\" content=\".*\"|<meta property=\"og:description\" content=\"$SAFE_DESC\"|g" "$file"; else sed -i "/<meta name=\"description\"/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"; fi
+              # Twitter Description
+              if grep -q "twitter:description" "$file"; then sed -i "s|<meta .*twitter:description.* content=\".*\"|<meta name=\"twitter:description\" content=\"$SAFE_DESC\"|g" "$file"; else sed -i "/<meta name=\"description\"/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"; fi
             fi
 
-            # -------------------------------------------------------
-            # PART D: Sync URL -> Canonical, Meta Tags AND Schema @id
-            # -------------------------------------------------------
+            # 4. Sync URL -> Canonical & Schema ID
             if [[ "$file" == *"index.html" ]]; then
-              
-              # Calculate Correct URL
               DIR_PATH=$(dirname "$file")
               if [ "$DIR_PATH" == "." ]; then FINAL_PATH=""; else FINAL_PATH="$DIR_PATH/"; fi
               CORRECT_URL="$BASE_URL/$FINAL_PATH"
 
-              # 1. Update Canonical Link
               sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
-
-              # 2. Update Schema '@id'
               sed -i "s|\"@id\": \".*\"|\"@id\": \"$CORRECT_URL\"|g" "$file"
-
-              # 3. Update/Insert og:url
-              if grep -q "property=\"og:url\"" "$file"; then
-                 sed -i "s|<meta property=\"og:url\" content=\".*\"|<meta property=\"og:url\" content=\"$CORRECT_URL\"|g" "$file"
-              else
-                 sed -i "/<link rel=\"canonical\"/a \    <meta property=\"og:url\" content=\"$CORRECT_URL\">" "$file"
-              fi
-
-              # 4. Update/Insert twitter:url
-              if grep -q "twitter:url" "$file"; then
-                 sed -i "s|<meta .*twitter:url.* content=\".*\"|<meta name=\"twitter:url\" content=\"$CORRECT_URL\"|g" "$file"
-              else
-                 sed -i "/<link rel=\"canonical\"/a \    <meta name=\"twitter:url\" content=\"$CORRECT_URL\">" "$file"
-              fi
+              
+              # OG/Twitter URL
+              if grep -q "property=\"og:url\"" "$file"; then sed -i "s|<meta property=\"og:url\" content=\".*\"|<meta property=\"og:url\" content=\"$CORRECT_URL\"|g" "$file"; else sed -i "/<link rel=\"canonical\"/a \    <meta property=\"og:url\" content=\"$CORRECT_URL\">" "$file"; fi
+              if grep -q "twitter:url" "$file"; then sed -i "s|<meta .*twitter:url.* content=\".*\"|<meta name=\"twitter:url\" content=\"$CORRECT_URL\"|g" "$file"; else sed -i "/<link rel=\"canonical\"/a \    <meta name=\"twitter:url\" content=\"$CORRECT_URL\">" "$file"; fi
             fi
-
           done
 
+      # --- STEP 2: Python Script for Breadcrumbs (Smart Logic) ---
+      - name: Generate Breadcrumbs (Python)
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          python3 -c "
+          import os, json
+
+          # Config
+          BASE_URL = 'https://www.projectgvm.com.au'
+          changed_files = '${{ steps.changed-files.outputs.all_changed_files }}'.split(' ')
+
+          def make_breadcrumb(path):
+              # Skip if root index.html
+              if path == 'index.html': return None
+              
+              parts = os.path.dirname(path).split('/')
+              if parts == ['']: return None # Root folder
+
+              # Start Breadcrumb List
+              breadcrumbs = {
+                  '@context': 'https://schema.org',
+                  '@type': 'BreadcrumbList',
+                  'itemListElement': []
+              }
+
+              # 1. Add Home
+              breadcrumbs['itemListElement'].append({
+                  '@type': 'ListItem',
+                  'position': 1,
+                  'name': 'Home',
+                  'item': BASE_URL + '/'
+              })
+
+              # 2. Add sub-pages
+              current_path = ''
+              for i, part in enumerate(parts):
+                  current_path += part + '/'
+                  
+                  # Format Name: 'gvm-gcm' -> 'Gvm Gcm'
+                  name = part.replace('-', ' ').title()
+                  # Special override for 'Faq' -> 'FAQ' if you want
+                  if name == 'Faq': name = 'FAQ' 
+                  if name == 'Gvm Gcm': name = 'GVM & GCM'
+
+                  breadcrumbs['itemListElement'].append({
+                      '@type': 'ListItem',
+                      'position': i + 2,
+                      'name': name,
+                      'item': BASE_URL + '/' + current_path
+                  })
+              
+              return breadcrumbs
+
+          def inject_breadcrumbs(file_path, json_data):
+              with open(file_path, 'r', encoding='utf-8') as f:
+                  content = f.read()
+
+              json_str = json.dumps(json_data, indent=2)
+              script_block = f'\n    <script type=\"application/ld+json\">\n{json_str}\n    </script>\n    '
+
+              # Check if marker exists
+              if '' in content:
+                  # Replace existing block (Regex to find content between markers)
+                  import re
+                  content = re.sub(r'.*', script_block, content, flags=re.DOTALL)
+              else:
+                  # Append before </head>
+                  content = content.replace('</head>', script_block + '\n</head>')
+
+              with open(file_path, 'w', encoding='utf-8') as f:
+                  f.write(content)
+
+          # Run Loop
+          for file in changed_files:
+              if file.endswith('index.html') and os.path.exists(file):
+                  print(f'Generating Breadcrumbs for {file}')
+                  bc_data = make_breadcrumb(file)
+                  if bc_data:
+                      inject_breadcrumbs(file, bc_data)
+          "
+
+      # --- STEP 3: Generate Sitemap ---
       - name: Generate Sitemap
         uses: cicirello/generate-sitemap@v1
         with:
@@ -144,7 +180,8 @@ jobs:
           include-html: true
           include-pdf: true
 
+      # --- STEP 4: Commit Everything ---
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-SEO: Synced Schema, Meta Tags & Sitemap [skip ci]"
+          commit_message: "Auto-SEO: Meta, Schema, Breadcrumbs & Sitemap [skip ci]"
