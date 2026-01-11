@@ -22,7 +22,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # --- STEP 1: Identify which HTML files changed ---
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
@@ -30,8 +29,7 @@ jobs:
           files: |
             **.html
 
-      # --- STEP 2: Update Schema Dates & Canonicals ---
-      - name: Update SEO Dates & Canonicals
+      - name: Auto-SEO (All Meta Tags)
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           NEW_DATE=$(date +'%Y-%m-%d')
@@ -40,31 +38,93 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "Processing SEO for: $file"
 
-            # 1. Update Schema Date
-            # Finds "dateModified": "YYYY-MM-DD" and updates it to today
+            # -------------------------------------------------------
+            # PART A: Update Schema Date
+            # -------------------------------------------------------
             sed -i "s/\"dateModified\": \".*\"/\"dateModified\": \"$NEW_DATE\"/g" "$file"
 
-            # 2. Update Canonical URL (Only for index.html files)
+            # -------------------------------------------------------
+            # PART B: Sync <title> to og:title / twitter:title
+            # -------------------------------------------------------
+            PAGE_TITLE=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$file")
+            
+            if [ -n "$PAGE_TITLE" ]; then
+              SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
+
+              # Update or Insert og:title
+              if grep -q "property=\"og:title\"" "$file"; then
+                sed -i "s|<meta property=\"og:title\" content=\".*\"|<meta property=\"og:title\" content=\"$SAFE_TITLE\"|g" "$file"
+              else
+                sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
+              fi
+
+              # Update or Insert twitter:title
+              if grep -q "twitter:title" "$file"; then
+                sed -i "s|<meta .*twitter:title.* content=\".*\"|<meta name=\"twitter:title\" content=\"$SAFE_TITLE\"|g" "$file"
+              else
+                sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"
+              fi
+            fi
+
+            # -------------------------------------------------------
+            # PART C: Sync Description to og:description / twitter:description
+            # -------------------------------------------------------
+            # Extract content from <meta name="description" content="...">
+            PAGE_DESC=$(grep '<meta name="description"' "$file" | sed -n 's/.*content="\([^"]*\)".*/\1/p')
+
+            if [ -n "$PAGE_DESC" ]; then
+              # Sanitize description (escape | and ")
+              SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
+
+              # Update or Insert og:description
+              if grep -q "property=\"og:description\"" "$file"; then
+                 sed -i "s|<meta property=\"og:description\" content=\".*\"|<meta property=\"og:description\" content=\"$SAFE_DESC\"|g" "$file"
+              else
+                 # Append after the main description tag
+                 sed -i "/<meta name=\"description\"/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
+              fi
+
+              # Update or Insert twitter:description
+              if grep -q "twitter:description" "$file"; then
+                 sed -i "s|<meta .*twitter:description.* content=\".*\"|<meta name=\"twitter:description\" content=\"$SAFE_DESC\"|g" "$file"
+              else
+                 # Append after the main description tag
+                 sed -i "/<meta name=\"description\"/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
+              fi
+            fi
+
+            # -------------------------------------------------------
+            # PART D: Canonical URL, og:url, twitter:url
+            # -------------------------------------------------------
             if [[ "$file" == *"index.html" ]]; then
               
-              # Calculate folder path (e.g., learn/towing) relative to root
+              # Calculate Correct URL
               DIR_PATH=$(dirname "$file")
-              
-              # If root, path is empty. Otherwise add slash.
-              if [ "$DIR_PATH" == "." ]; then
-                  FINAL_PATH=""
-              else
-                  FINAL_PATH="$DIR_PATH/"
-              fi
-              
+              if [ "$DIR_PATH" == "." ]; then FINAL_PATH=""; else FINAL_PATH="$DIR_PATH/"; fi
               CORRECT_URL="$BASE_URL/$FINAL_PATH"
-              
-              # Update the <link rel="canonical"> tag
+
+              # 1. Update Canonical
               sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
+
+              # 2. Update or Insert og:url
+              if grep -q "property=\"og:url\"" "$file"; then
+                 sed -i "s|<meta property=\"og:url\" content=\".*\"|<meta property=\"og:url\" content=\"$CORRECT_URL\"|g" "$file"
+              else
+                 # Append after canonical link
+                 sed -i "/<link rel=\"canonical\"/a \    <meta property=\"og:url\" content=\"$CORRECT_URL\">" "$file"
+              fi
+
+              # 3. Update or Insert twitter:url
+              if grep -q "twitter:url" "$file"; then
+                 sed -i "s|<meta .*twitter:url.* content=\".*\"|<meta name=\"twitter:url\" content=\"$CORRECT_URL\"|g" "$file"
+              else
+                 # Append after canonical link
+                 sed -i "/<link rel=\"canonical\"/a \    <meta name=\"twitter:url\" content=\"$CORRECT_URL\">" "$file"
+              fi
             fi
+
           done
 
-      # --- STEP 3: Generate Sitemap (Now includes updated files) ---
       - name: Generate Sitemap
         uses: cicirello/generate-sitemap@v1
         with:
@@ -80,9 +140,7 @@ jobs:
           include-html: true
           include-pdf: true
 
-      # --- STEP 4: Commit Everything (HTML + XML) ---
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-SEO: HTML dates updated + Sitemap regen [skip ci]"
-          # Note: file_pattern was removed so it commits ALL changed files (HTML + XML)
+          commit_message: "Auto-SEO: Synced All Meta Tags & Sitemap [skip ci]"
