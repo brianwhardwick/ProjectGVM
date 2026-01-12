@@ -630,6 +630,39 @@ img.hero-logo {
 
 
 
+.breadcrumb {
+    padding: 10px 0;
+    margin-bottom: 0px;
+    font-size: 0.9rem;
+    color: var(--color-white);
+}
+.breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+/* The separator (/) */
+.breadcrumb li + li::before {
+    content: "/";
+    padding: 0 8px;
+}
+.breadcrumb a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+/* The current page (non-clickable) */
+.breadcrumb li[aria-current="page"] {
+    font-weight: 500;
+}
 
 
 
@@ -666,42 +699,7 @@ img.hero-logo {
 
 
 
-.breadcrumb {
-    padding: 10px 0;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-    color: #666;
-}
-.breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-}
-.breadcrumb li {
-    display: flex;
-    align-items: center;
-}
-/* The separator (/) */
-.breadcrumb li + li::before {
-    content: "/";
-    padding: 0 8px;
-    color: #ccc;
-}
-.breadcrumb a {
-    text-decoration: none;
-    color: #0b5394; /* Matches your theme-color */
-    transition: color 0.2s ease;
-}
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-/* The current page (non-clickable) */
-.breadcrumb li[aria-current="page"] {
-    color: #333;
-    font-weight: 500;
-}
+
 
 
 
@@ -1259,4 +1257,5 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
