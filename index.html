@@ -29,49 +29,55 @@
 
     <script type="application/ld+json">
     {
-    "@context": "https://schema.org",
-    "@type": "HomePage",
-    "name": "Project GVM",
-    "url": "https://www.projectgvm.com.au/",
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "Project GVM",
-      "url": "https://www.projectgvm.com.au/"
-    },
-    "mainEntity": {
-      "@type": "Person",
-      "name": "Brian Hardwick",
-      "jobTitle": "Mechanical Engineer",
-      "description": "Use our free 4WD GVM calculator to check vehicle weight, axle loads, and stay legal while adding accessories. Easy, accurate, and built for 4WD enthusiasts.",
-      "knowsAbout": [
-        "Vehicle Dynamics",
-        "Gross Vehicle Mass",
-        "Gross Combination Mass",
-        "Aggregate Trailer Mass",
-        "Gross Trailer Mass",
-        "Towing Safety",
-        "Axle Load Limits",
-        "Automotive Engineering"
-      ],
-      "worksFor": {
-        "@type": "Organization",
-        "name": "Project GVM",
-        "url": "https://www.projectgvm.com.au/"
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.projectgvm.com.au/"
-        }]
-      },
-      "url": "https://www.projectgvm.com.au/"
-    }
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://www.projectgvm.com.au/#website",
+          "name": "Project GVM",
+          "url": "https://www.projectgvm.com.au/"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://www.projectgvm.com.au/#homepage",
+          "url": "https://www.projectgvm.com.au/",
+          "name": "4WD Weight Calculator - Project GVM",
+          "isPartOf": {
+            "@id": "https://www.projectgvm.com.au/#website"
+          },
+          "about": {
+            "@type": "Person",
+            "name": "Brian Hardwick",
+            "jobTitle": "Mechanical Engineer",
+            "knowsAbout": [
+              "Vehicle Dynamics",
+              "Gross Vehicle Mass",
+              "Gross Combination Mass",
+              "Axle Load Limits",
+              "Towing Safety"
+            ],
+            "worksFor": {
+              "@type": "Organization",
+              "name": "Project GVM",
+              "url": "https://www.projectgvm.com.au/"
+            }
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.projectgvm.com.au/"
+            }
+          ]
+        }
+      ]
     }
     </script>
+
     
 </head>
 
@@ -202,3 +208,4 @@
     <script src="/assets/js/main.js"></script>
 </body>
 </html>
+
