@@ -655,10 +655,11 @@ img.hero-logo {
 .breadcrumb a {
     color: var(--color-white);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: opacity 0.2s ease;
 }
 .breadcrumb a:hover {
     text-decoration: underline;
+    opacity: 0.8;
 }
 /* The current page (non-clickable) */
 .breadcrumb li[aria-current="page"] {
@@ -1260,6 +1261,7 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
 
