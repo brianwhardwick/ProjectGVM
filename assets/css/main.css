@@ -690,13 +690,12 @@ img.hero-logo {
   }
 
   .main-header .h1-subtitle {
-    display: block;       /* Forces the subtitle to its own line */
-    font-size: 20px;      /* Matches your old p size */
-    font-weight: 400;     /* Resets the bolding from the H1 */
+    display: block;    
+    font-size: 20px;    
+    font-weight: 400; 
     opacity: 0.9;
-    margin-top: 5px;      /* Adds a little breathing room */
+    margin-top: 5px;  
     
-    /* Centering logic inherited from your old p tag */
     max-width: 1000px; 
     margin-left: auto;
     margin-right: auto;
@@ -716,6 +715,41 @@ img.hero-logo {
   .main-wrapper.app-active .main-header { 
       display: none; 
   }
+
+/* --- Responsive Tweaks --- */
+
+/* Tablet / small desktop */
+@media (max-width: 1024px) {
+  .main-header h1 {
+    font-size: 2rem;
+  }
+  .main-header h1-subtitle {
+    font-size: 1.1rem;
+  }
+  .main-header {
+    padding-top: 15px;
+    padding-bottom: 25px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .main-header h1 {
+    font-size: 1.5rem;
+  }
+  .main-header h1-subtitle {
+    font-size: 1rem;
+  }
+  .main-header {
+    padding-top: 0px;
+    padding-bottom: 10px;
+  }
+
+  #app-container {
+    height: calc(100vh - 65px);   /* fallback */
+    height: calc(100dvh - 65px);  /* preferred */
+  }
+}
 
 
 
@@ -1277,6 +1311,7 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
 
