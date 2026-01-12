@@ -886,7 +886,7 @@ img.hero-logo {
 
   /* CHANGED: When active, lock the wrapper to the screen size */
   .gvm-wrapper.app-active {
-    height: calc(100dvh - 50px);
+    height: calc(100dvh - 65px);
     overflow: hidden;
     padding-bottom: 0;
   }
@@ -1277,6 +1277,7 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
 
