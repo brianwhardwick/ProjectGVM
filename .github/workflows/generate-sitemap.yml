@@ -110,7 +110,7 @@ jobs:
               sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
 
               # 2. Update Schema '@id'
-              sed -i "s|\"@id\": \".*\"|\"@id\": \"$CORRECT_URL\"|g" "$file"
+              sed -i "/\"@type\": \"Article\"/{n; s|\"@id\": \".*\"|\"@id\": \"$CORRECT_URL\"|}" "$file"
 
               # 3. Update/Insert og:url
               if grep -q "property=\"og:url\"" "$file"; then
