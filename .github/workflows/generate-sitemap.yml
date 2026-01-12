@@ -26,40 +26,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # --- Step 1: Determine files to process ---
-      - name: Get Files to Process
-        id: target
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "Manual Run: Processing ALL HTML files."
-            # Find all HTML files, exclude .git, replace newlines with spaces
-            ALL_FILES=$(find . -name "*.html" -not -path "./.git/*" | tr '\n' ' ')
-            echo "list=$ALL_FILES" >> $GITHUB_OUTPUT
-            echo "run=true" >> $GITHUB_OUTPUT
-          else
-            echo "Push detected: checking for changes..."
-            # We will rely on the next step for changed files
-          fi
-
-      - name: Get changed files (Push Only)
-        if: github.event_name == 'push'
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files: |
-            **.html
-
-      - name: Combine File Lists
-        id: final_list
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-             echo "files=${{ steps.target.outputs.list }}" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.changed-files.outputs.any_changed }}" == "true" ]; then
-             echo "files=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
-          else
-             echo "files=" >> $GITHUB_OUTPUT
-          fi
-
       # --- Step 2: Run The Fixed Python Script ---
       - name: Run Safe SEO Script
         if: steps.final_list.outputs.files != ''
@@ -75,13 +41,25 @@ jobs:
           file_list_str = '${{ steps.final_list.outputs.files }}'
           target_files = file_list_str.split(' ')
           TODAY = datetime.now().strftime('%Y-%m-%d')
+          
+          # Markers to identify the block in future runs
+          BC_START = ''
+          BC_END = ''
 
           def update_meta_tag(content, property_name, new_value, is_name=False):
               attr = 'name' if is_name else 'property'
               safe_val = new_value.replace('\"', '&quot;')
-              pattern = re.compile(f'(<meta\\s+{attr}=\"{property_name}\"\\s+content=\")(.*?)(\")', re.IGNORECASE)
-              if pattern.search(content):
-                  return pattern.sub(f'\\g<1>{safe_val}\\g<3>', content)
+              
+              # Pattern 1: name="..." content="..."
+              p1 = re.compile(f'(<meta\\s+{attr}=[\"\']{property_name}[\"\']\\s+content=[\"\'])(.*?)([\"\'])', re.IGNORECASE)
+              # Pattern 2: content="..." name="..."
+              p2 = re.compile(f'(<meta\\s+content=[\"\'])(.*?)([\"\']\\s+{attr}=[\"\']{property_name}[\"\'])', re.IGNORECASE)
+
+              if p1.search(content):
+                  return p1.sub(f'\\g<1>{safe_val}\\g<3>', content)
+              elif p2.search(content):
+                  return p2.sub(f'\\g<1>{safe_val}\\g<3>', content)
+              
               return content
 
           def process_file(file_path):
@@ -100,6 +78,7 @@ jobs:
               title_match = re.search(r'<title>(.*?)</title>', content, re.IGNORECASE)
               if title_match:
                   page_title = title_match.group(1)
+                  # Update OpenGraph and Twitter
                   content = update_meta_tag(content, 'og:title', page_title)
                   content = update_meta_tag(content, 'twitter:title', page_title, is_name=True)
                   # Update Schema Headline
@@ -111,13 +90,12 @@ jobs:
                   page_desc = desc_match.group(1)
                   content = update_meta_tag(content, 'og:description', page_desc)
                   content = update_meta_tag(content, 'twitter:description', page_desc, is_name=True)
-                  # Update Schema Description
                   content = re.sub(r'(\"description\": \")(.*?)(\")', f'\\g<1>{page_desc}\\g<3>', content)
 
               # 4. BREADCRUMBS & CANONICALS (Only for non-root files)
               if file_path.endswith('index.html') and file_path != 'index.html' and file_path != './index.html':
                   parts = os.path.dirname(file_path).replace('./', '').split('/')
-                  parts = [p for p in parts if p] # Filter empty
+                  parts = [p for p in parts if p] 
                   
                   if parts:
                       rel_path = '/'.join(parts) + '/'
@@ -140,6 +118,7 @@ jobs:
                       for i, part in enumerate(parts):
                           curr += part + '/'
                           name = part.replace('-', ' ').title()
+                          # Custom Names
                           if name.lower() == 'faq': name = 'FAQ'
                           if name.lower() == 'gvm gcm': name = 'GVM & GCM'
                           
@@ -152,15 +131,16 @@ jobs:
                       
                       json_str = json.dumps(breadcrumbs, indent=2)
                       
-                      # Use Markers to safely replace ONLY the breadcrumb block
-                      bc_block = f'\n    <script type=\"application/ld+json\">\n{json_str}\n    </script>\n    '
+                      # Create the block WITH MARKERS
+                      bc_block = f'\n    {BC_START}\n    <script type=\"application/ld+json\">\n{json_str}\n    </script>\n    {BC_END}\n'
 
                       # Regex to find EXISTING marker block
-                      marker_pattern = re.compile(r'.*?', re.DOTALL)
+                      # Matches everything between START and END markers
+                      marker_pattern = re.compile(re.escape(BC_START) + r'.*?' + re.escape(BC_END), re.DOTALL)
 
                       if marker_pattern.search(content):
                           # Replace existing block
-                          content = marker_pattern.sub(bc_block, content)
+                          content = marker_pattern.sub(bc_block.strip(), content)
                       else:
                           # Append new block before closing head if it doesn't exist
                           content = content.replace('</head>', f'{bc_block}\n</head>')
