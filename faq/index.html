@@ -30,113 +30,129 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "dateModified": "2026-01-12",
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://www.projectgvm.com.au/faq/"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Brian Hardwick"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Project GVM",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://www.projectgvm.com.au/assets/img/brand/logo-schema-512x512.png"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.projectgvm.com.au/"
-        },{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "FAQ",
-          "item": "https://www.projectgvm.com.au/faq/"
-        }]
-      },
-      "mainEntity": [
+      "@graph": [
         {
-        "@type": "Question",
-        "name": "What is the difference between GVM and Axle Load Limits?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "GVM is the total weight limit of the car. However, your vehicle also has a Front Axle Limit and a Rear Axle Limit. It is possible to be under your total GVM but still exceed the rear axle limit if you pack too much weight in the back. This calculator checks both your total GVM and individual axle loads."
+          "@type": "FAQPage",
+          "@id": "https://www.projectgvm.com.au/faq/#faq",
+          "url": "https://www.projectgvm.com.au/faq/",
+          "name": "Project GVM - FAQs",
+          "dateModified": "2026-01-12",
+          "author": {
+            "@type": "Person",
+            "name": "Brian Hardwick"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Project GVM",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.projectgvm.com.au/assets/img/brand/logo-schema-512x512.png"
+            }
+          },
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the difference between GVM and Axle Load Limits?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "GVM is the total weight limit of the car. However, your vehicle also has a Front Axle Limit and a Rear Axle Limit. It is possible to be under your total GVM but still exceed the rear axle limit if you pack too much weight in the back. This calculator checks both your total GVM and individual axle loads."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the difference between Tare Weight and Kerb Weight?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tare Weight is the weight of the empty vehicle with 10 litres of fuel and no occupants. Kerb Weight is usually defined as the vehicle ready to drive with a full tank of fuel, but no payload or driver. The calculator starts with the manufacturer's Tare Weight and adds fuel and accessories based on your inputs."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does a GVM Upgrade increase my towing capacity?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Generally, no. In many cases, it actually reduces it. Most vehicles have a Gross Combination Mass (GCM), which is the total allowed weight of the vehicle plus the trailer. If you increase the weight of the vehicle (by using a GVM upgrade), you often have less allowance left over for a heavy trailer."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the \"Leverage Effect\" or \"Cantilever Effect\"?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Weight placed behind the rear axle acts like a lever. It pushes the rear down but actually lifts weight off the front wheels, multiplying the load on the rear axle."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why did my Front Axle weight decrease when I added a load to the boot?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "When weight is added behind the rear axle, it acts as a lever over the wheelbase, increasing rear axle load while reducing front axle load. This affects steering and braking performance."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "I have a GVM upgrade that isn't listed in the dropdown. What do I do?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Select \"Stock\" as the supplier, then manually edit the Certified GVM, Front Axle Limit, and Rear Axle Limit fields in the GVM Upgrade section. The calculator will update automatically."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why is the calculator showing a red warning for my Rear Axle?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "This indicates the rear axle load limit has been exceeded, even if total GVM is still under. Redistributing weight forward or reducing rear-mounted accessories can help."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this calculator account for the weight of the driver?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. By default, the calculator includes an 85kg driver. This can be adjusted in the Occupants section for more accurate results."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What does the \"Post-Rego\" warning mean?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Post-registration GVM upgrades require state-based engineering certification. Pre-registration (SSM) upgrades apply only to new vehicles before first registration."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How accurate is this calculator?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The calculator provides an informed estimate based on manufacturer data and typical accessory weights. For legal compliance, vehicles must be weighed on a certified weighbridge."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.projectgvm.com.au/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "FAQ",
+              "item": "https://www.projectgvm.com.au/faq/"
+            }
+          ]
         }
-      }, {
-        "@type": "Question",
-        "name": "What is the difference between Tare Weight and Kerb Weight?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Tare Weight is the weight of the empty vehicle with 10 litres of fuel and no occupants. Kerb Weight is usually defined as the vehicle ready to drive with a full tank of fuel, but no payload or driver. The calculator starts with the manufacturer's Tare Weight and adds fuel and accessories based on your inputs."
-        }
-      }, {
-        "@type": "Question",
-        "name": "Does a GVM Upgrade increase my towing capacity?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Generally, no. In many cases, it actually reduces it. Most vehicles have a Gross Combination Mass (GCM), which is the total allowed weight of the vehicle plus the trailer. If you increase the weight of the vehicle (by using a GVM upgrade), you often have less allowance left over for a heavy trailer."
-        }
-      }, {
-        "@type": "Question",
-        "name": "What is the \"Leverage Effect\" or \"Cantilever Effect\"?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Weight placed behind the rear axle (like a heavy tow ball weight, spare wheels, or jerry cans) acts like a lever. It pushes the rear down but actually lifts weight off the front wheels. This creates a pivot point that multiplies the load on the rear axle."
-        }
-      }, {
-        "@type": "Question",
-        "name": "Why did my Front Axle weight decrease when I added a load to the boot?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "This is due to the physics of the wheelbase. When you add weight behind the rear wheels (the \"overhang\"), it acts as a lever, putting more pressure on the rear axle and lifting weight off the front axle. This is critical for steering and braking safety."
-        }
-      }, {
-        "@type": "Question",
-        "name": "I have a GVM upgrade that isn't listed in the dropdown. What do I do?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Select \"Stock\" as the supplier, and then manually edit the Certified GVM, Front Axle Limit, and Rear Axle Limit fields in the \"GVM Upgrade\" section. The calculator will update the visual diagram based on your custom numbers."
-        }
-      }, {
-        "@type": "Question",
-        "name": "Why is the calculator showing a red warning for my Rear Axle?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "You may be under your total GVM limit, but you have exceeded the load capacity for the rear axle. This is common in dual-cab utes. You can try moving heavy items forward (between the axles), removing accessories, or investigating a suspension upgrade that increases axle capacity."
-        }
-      }, {
-        "@type": "Question",
-        "name": "Does this calculator account for the weight of the driver?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. By default, the calculator adds 85kg for the driver. You can adjust this in the \"Occupants\" section to \"Driver Only\" or specific passenger configurations to get a more accurate result."
-        }
-      }, {
-        "@type": "Question",
-        "name": "What does the \"Post-Rego\" warning mean?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "If you fit a GVM upgrade after the vehicle has already been registered (Post-Rego), it requires an engineering signatory (compliance plate) relevant to your state. A federally approved upgrade (SSM) usually applies to brand-new vehicles prior to first registration."
-        }
-      }, {
-        "@type": "Question",
-        "name": "How accurate is this calculator?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The calculator provides a highly educated estimate based on manufacturer specifications and average accessory weights. However, every vehicle is unique due to manufacturing tolerances. This tool is for planning purposes; for 100% compliance, you must weigh your vehicle at a certified weighbridge."
-        }
-      }]
+      ]
     }
     </script>
+
     
 </head>
 
@@ -261,6 +277,7 @@
     <script src="/assets/js/main.js"></script>
 </body>
 </html>
+
 
 
 
