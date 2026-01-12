@@ -5,8 +5,6 @@
 const GVMApp = (function() {
     'use strict';
 
-    document.getElementById("year").textContent = new Date().getFullYear();
-
     // --- 1. Configuration ---
     const config = {
         appUrl: "https://gvmcalculator.streamlit.app/?embed=true&theme=light",
@@ -207,4 +205,5 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
+
 
