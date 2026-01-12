@@ -711,8 +711,11 @@ img.hero-logo {
   }
   
   /* Hide header when app is active */
-  .main-wrapper.app-active .main-header { display: none; }
-
+  .gvm-wrapper.app-active .gvm-header,
+  .gvm-wrapper.app-active .main-header,   /* <--- ADD THIS LINE */
+  .main-wrapper.app-active .main-header { 
+      display: none; 
+  }
 
 
 
@@ -1274,6 +1277,7 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
 
