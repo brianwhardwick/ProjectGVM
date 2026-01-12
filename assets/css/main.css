@@ -631,7 +631,7 @@ img.hero-logo {
 
 
 .breadcrumb {
-    padding: 10px 0;
+    padding: 10px 20px;
     margin-bottom: 0px;
     font-size: 0.9rem;
     color: var(--color-white);
@@ -1261,6 +1261,7 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
 
