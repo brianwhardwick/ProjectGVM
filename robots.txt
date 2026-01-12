@@ -1,4 +1,5 @@
 User-agent: *
-Allow: /
+Disallow: /assets/
+Disallow: /.github/
 
 Sitemap: https://www.projectgvm.com.au/sitemap.xml
