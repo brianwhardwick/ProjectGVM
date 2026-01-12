@@ -653,6 +653,7 @@ img.hero-logo {
     padding: 0 8px;
 }
 .breadcrumb a {
+    color: var(--color-white);
     text-decoration: none;
     transition: color 0.2s ease;
 }
@@ -663,6 +664,8 @@ img.hero-logo {
 .breadcrumb li[aria-current="page"] {
     font-weight: 500;
 }
+
+
 
 
 
@@ -1257,5 +1260,6 @@ footer {
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
+
 
 
