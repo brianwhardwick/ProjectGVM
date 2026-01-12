@@ -17,16 +17,15 @@
 </footer>
 
 <script>
-    (function() {
-        const startYear = 2025;
-        const currentYear = new Date().getFullYear();
-        const display = document.getElementById('copyright-year');
-        
-        if (currentYear > startYear) {
-            display.textContent = `${startYear}–${currentYear}`;
-        } else {
-            display.textContent = startYear;
-        }
-    })();
+  document.addEventListener('DOMContentLoaded', function() {
+      const startYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const display = document.getElementById('copyright-year');
+  
+      if (currentYear > startYear) {
+          display.textContent = `${startYear}–${currentYear}`;
+      } else {
+          display.textContent = startYear;
+      }
+  });
 </script>
-
