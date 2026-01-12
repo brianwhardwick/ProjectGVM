@@ -1,7 +1,6 @@
 name: Auto-SEO & Sitemap
 
 on:
-  # Trigger 1: Run automatically when you push HTML changes
   push:
     branches:
       - main
@@ -9,16 +8,13 @@ on:
       - '**/*.html'
       - '**/*.pdf'
 
-  # Trigger 2: Manual Button (To force-update/fix all files)
-  workflow_dispatch:
-
 permissions:
   contents: write
 
 jobs:
   seo_and_sitemap:
     runs-on: ubuntu-latest
-    name: Safe SEO Updates & Sitemap
+    name: SEO Updates & Sitemap Generation
 
     steps:
       - name: Checkout the repo
@@ -26,143 +22,112 @@ jobs:
         with:
           fetch-depth: 0
 
-      # --- Step 2: Run The Fixed Python Script ---
-      - name: Run Safe SEO Script
-        if: steps.final_list.outputs.files != ''
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **.html
+
+      - name: Auto-SEO (All Meta Tags + Schema)
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          python3 -c "
-          import os
-          import re
-          import json
-          from datetime import datetime
+          NEW_DATE=$(date +'%Y-%m-%d')
+          BASE_URL="https://www.projectgvm.com.au"
 
-          # --- CONFIGURATION ---
-          BASE_URL = 'https://www.projectgvm.com.au'
-          file_list_str = '${{ steps.final_list.outputs.files }}'
-          target_files = file_list_str.split(' ')
-          TODAY = datetime.now().strftime('%Y-%m-%d')
-          
-          # Markers to identify the block in future runs
-          BC_START = ''
-          BC_END = ''
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Processing SEO for: $file"
 
-          def update_meta_tag(content, property_name, new_value, is_name=False):
-              attr = 'name' if is_name else 'property'
-              safe_val = new_value.replace('\"', '&quot;')
+            # -------------------------------------------------------
+            # PART A: Update Schema Date
+            # -------------------------------------------------------
+            sed -i "s/\"dateModified\": \".*\"/\"dateModified\": \"$NEW_DATE\"/g" "$file"
+
+            # -------------------------------------------------------
+            # PART B: Sync Title -> Meta Tags AND Schema Headline
+            # -------------------------------------------------------
+            PAGE_TITLE=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$file")
+            
+            if [ -n "$PAGE_TITLE" ]; then
+              # Sanitize (escape | and ") for sed processing
+              SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
+
+              # 1. Update Schema 'headline'
+              sed -i "s|\"headline\": \".*\"|\"headline\": \"$SAFE_TITLE\"|g" "$file"
+
+              # 2. Update/Insert og:title
+              if grep -q "property=\"og:title\"" "$file"; then
+                sed -i "s|<meta property=\"og:title\" content=\".*\"|<meta property=\"og:title\" content=\"$SAFE_TITLE\"|g" "$file"
+              else
+                sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
+              fi
+
+              # 3. Update/Insert twitter:title
+              if grep -q "twitter:title" "$file"; then
+                sed -i "s|<meta .*twitter:title.* content=\".*\"|<meta name=\"twitter:title\" content=\"$SAFE_TITLE\"|g" "$file"
+              else
+                sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"
+              fi
+            fi
+
+            # -------------------------------------------------------
+            # PART C: Sync Description -> Meta Tags AND Schema Description
+            # -------------------------------------------------------
+            PAGE_DESC=$(grep '<meta name="description"' "$file" | sed -n 's/.*content="\([^"]*\)".*/\1/p')
+
+            if [ -n "$PAGE_DESC" ]; then
+              SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
+
+              # 1. Update Schema 'description'
+              sed -i "s|\"description\": \".*\"|\"description\": \"$SAFE_DESC\"|g" "$file"
+
+              # 2. Update/Insert og:description
+              if grep -q "property=\"og:description\"" "$file"; then
+                 sed -i "s|<meta property=\"og:description\" content=\".*\"|<meta property=\"og:description\" content=\"$SAFE_DESC\"|g" "$file"
+              else
+                 sed -i "/<meta name=\"description\"/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
+              fi
+
+              # 3. Update/Insert twitter:description
+              if grep -q "twitter:description" "$file"; then
+                 sed -i "s|<meta .*twitter:description.* content=\".*\"|<meta name=\"twitter:description\" content=\"$SAFE_DESC\"|g" "$file"
+              else
+                 sed -i "/<meta name=\"description\"/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
+              fi
+            fi
+
+            # -------------------------------------------------------
+            # PART D: Sync URL -> Canonical, Meta Tags AND Schema @id
+            # -------------------------------------------------------
+            if [[ "$file" == *"index.html" ]]; then
               
-              # Pattern 1: name="..." content="..."
-              p1 = re.compile(f'(<meta\\s+{attr}=[\"\']{property_name}[\"\']\\s+content=[\"\'])(.*?)([\"\'])', re.IGNORECASE)
-              # Pattern 2: content="..." name="..."
-              p2 = re.compile(f'(<meta\\s+content=[\"\'])(.*?)([\"\']\\s+{attr}=[\"\']{property_name}[\"\'])', re.IGNORECASE)
+              # Calculate Correct URL
+              DIR_PATH=$(dirname "$file")
+              if [ "$DIR_PATH" == "." ]; then FINAL_PATH=""; else FINAL_PATH="$DIR_PATH/"; fi
+              CORRECT_URL="$BASE_URL/$FINAL_PATH"
 
-              if p1.search(content):
-                  return p1.sub(f'\\g<1>{safe_val}\\g<3>', content)
-              elif p2.search(content):
-                  return p2.sub(f'\\g<1>{safe_val}\\g<3>', content)
-              
-              return content
+              # 1. Update Canonical Link
+              sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
 
-          def process_file(file_path):
-              if not file_path or not os.path.exists(file_path): return
-              
-              print(f'Processing: {file_path}')
-              with open(file_path, 'r', encoding='utf-8') as f:
-                  original_content = f.read()
+              # 2. Update Schema '@id'
+              sed -i "s|\"@id\": \".*\"|\"@id\": \"$CORRECT_URL\"|g" "$file"
 
-              content = original_content
+              # 3. Update/Insert og:url
+              if grep -q "property=\"og:url\"" "$file"; then
+                 sed -i "s|<meta property=\"og:url\" content=\".*\"|<meta property=\"og:url\" content=\"$CORRECT_URL\"|g" "$file"
+              else
+                 sed -i "/<link rel=\"canonical\"/a \    <meta property=\"og:url\" content=\"$CORRECT_URL\">" "$file"
+              fi
 
-              # 1. UPDATE SCHEMA DATES
-              content = re.sub(r'(\"dateModified\": \")(\d{4}-\d{2}-\d{2})(\")', f'\\g<1>{TODAY}\\g<3>', content)
+              # 4. Update/Insert twitter:url
+              if grep -q "twitter:url" "$file"; then
+                 sed -i "s|<meta .*twitter:url.* content=\".*\"|<meta name=\"twitter:url\" content=\"$CORRECT_URL\"|g" "$file"
+              else
+                 sed -i "/<link rel=\"canonical\"/a \    <meta name=\"twitter:url\" content=\"$CORRECT_URL\">" "$file"
+              fi
+            fi
 
-              # 2. SYNC TITLE TO META TAGS
-              title_match = re.search(r'<title>(.*?)</title>', content, re.IGNORECASE)
-              if title_match:
-                  page_title = title_match.group(1)
-                  # Update OpenGraph and Twitter
-                  content = update_meta_tag(content, 'og:title', page_title)
-                  content = update_meta_tag(content, 'twitter:title', page_title, is_name=True)
-                  # Update Schema Headline
-                  content = re.sub(r'(\"headline\": \")(.*?)(\")', f'\\g<1>{page_title}\\g<3>', content)
-
-              # 3. SYNC DESCRIPTION TO META TAGS
-              desc_match = re.search(r'<meta\s+name=\"description\"\s+content=\"(.*?)\"', content, re.IGNORECASE)
-              if desc_match:
-                  page_desc = desc_match.group(1)
-                  content = update_meta_tag(content, 'og:description', page_desc)
-                  content = update_meta_tag(content, 'twitter:description', page_desc, is_name=True)
-                  content = re.sub(r'(\"description\": \")(.*?)(\")', f'\\g<1>{page_desc}\\g<3>', content)
-
-              # 4. BREADCRUMBS & CANONICALS (Only for non-root files)
-              if file_path.endswith('index.html') and file_path != 'index.html' and file_path != './index.html':
-                  parts = os.path.dirname(file_path).replace('./', '').split('/')
-                  parts = [p for p in parts if p] 
-                  
-                  if parts:
-                      rel_path = '/'.join(parts) + '/'
-                      full_url = f'{BASE_URL}/{rel_path}'
-                      
-                      # Update Canonical
-                      content = re.sub(r'(<link\s+rel=\"canonical\"\s+href=\")(.*?)(\")', f'\\g<1>{full_url}\\g<3>', content)
-                      # Update Schema @id
-                      content = re.sub(r'(\"@id\": \")(.*?)(\")', f'\\g<1>{full_url}\\g<3>', content)
-
-                      # Generate Breadcrumb JSON
-                      breadcrumbs = {
-                          '@context': 'https://schema.org',
-                          '@type': 'BreadcrumbList',
-                          'itemListElement': []
-                      }
-                      breadcrumbs['itemListElement'].append({'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE_URL}/'})
-                      
-                      curr = ''
-                      for i, part in enumerate(parts):
-                          curr += part + '/'
-                          name = part.replace('-', ' ').title()
-                          # Custom Names
-                          if name.lower() == 'faq': name = 'FAQ'
-                          if name.lower() == 'gvm gcm': name = 'GVM & GCM'
-                          
-                          breadcrumbs['itemListElement'].append({
-                              '@type': 'ListItem', 
-                              'position': i + 2, 
-                              'name': name, 
-                              'item': f'{BASE_URL}/{curr}'
-                          })
-                      
-                      json_str = json.dumps(breadcrumbs, indent=2)
-                      
-                      # Create the block WITH MARKERS
-                      bc_block = f'\n    {BC_START}\n    <script type=\"application/ld+json\">\n{json_str}\n    </script>\n    {BC_END}\n'
-
-                      # Regex to find EXISTING marker block
-                      # Matches everything between START and END markers
-                      marker_pattern = re.compile(re.escape(BC_START) + r'.*?' + re.escape(BC_END), re.DOTALL)
-
-                      if marker_pattern.search(content):
-                          # Replace existing block
-                          content = marker_pattern.sub(bc_block.strip(), content)
-                      else:
-                          # Append new block before closing head if it doesn't exist
-                          content = content.replace('</head>', f'{bc_block}\n</head>')
-
-              # 5. SAFETY CHECKS
-              if '</head>' not in content:
-                  print(f'SAFETY ERROR: </head> tag missing for {file_path}. Skipping.')
-                  return
-              if len(content) < (len(original_content) * 0.5):
-                  print(f'SAFETY ERROR: Content shrank for {file_path}. Skipping.')
-                  return
-
-              # 6. WRITE FILE
-              if content != original_content:
-                  with open(file_path, 'w', encoding='utf-8') as f:
-                      f.write(content)
-                  print(f'Successfully updated {file_path}')
-
-          # Run Loop
-          for file in target_files:
-              process_file(file.strip())
-          "
+          done
 
       - name: Generate Sitemap
         uses: cicirello/generate-sitemap@v1
@@ -182,4 +147,4 @@ jobs:
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto-SEO: Safe Python Updates + Sitemap [skip ci]"
+          commit_message: "Auto-SEO: Synced Schema, Meta Tags & Sitemap [skip ci]"
