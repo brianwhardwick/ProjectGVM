@@ -31,73 +31,80 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "How the Calculator Works",
-      "description": "A detailed explanation of the engineering physics, moment calculations, and axle load logic used in the Project GVM 4WD calculator.",
-    
-      "articleSection": "4WD Payload & GVM Advice",
-      "keywords": [
-          "GVM",
-          "payload",
-          "axle weights",
-          "4WD accessories",
-          "aftermarket weight"
-      ],
-    
-      "datePublished": "2025-12-24",
-      "dateModified": "2026-01-12",
-    
-      "image": {
-        "@type": "ImageObject",
-        "url": "https://www.projectgvm.com.au/assets/img/brand/og-image.jpg",
-        "width": 1200,
-        "height": 630
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://www.projectgvm.com.au/learn/calculator/"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Brian Hardwick",
-        "url": "https://www.projectgvm.com.au/about/"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Project GVM",
-        "url": "https://www.projectgvm.com.au/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://www.projectgvm.com.au/assets/img/brand/logo-schema-512x512.png"
+      "@graph": [
+        {
+          "@type": "Article",
+          "@id": "https://www.projectgvm.com.au/learn/calculator/#article",
+          "headline": "How the Calculator Works",
+          "description": "A detailed explanation of the engineering physics, moment calculations, and axle load logic used in the Project GVM 4WD calculator.",
+          "articleSection": "4WD Payload & GVM Advice",
+          "keywords": [
+            "GVM",
+            "payload",
+            "axle weights",
+            "vehicle moments",
+            "load distribution"
+          ],
+          "datePublished": "2025-12-24",
+          "dateModified": "2026-01-12",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://www.projectgvm.com.au/assets/img/brand/og-image.jpg",
+            "width": 1200,
+            "height": 630
+          },
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://www.projectgvm.com.au/learn/calculator/"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Brian Hardwick",
+            "url": "https://www.projectgvm.com.au/about/"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Project GVM",
+            "url": "https://www.projectgvm.com.au/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.projectgvm.com.au/assets/img/brand/logo-schema-512x512.png"
+            }
+          },
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://www.projectgvm.com.au/#website",
+            "name": "Project GVM",
+            "url": "https://www.projectgvm.com.au/"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.projectgvm.com.au/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Learn",
+              "item": "https://www.projectgvm.com.au/learn/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "How the Calculator Works",
+              "item": "https://www.projectgvm.com.au/learn/calculator/"
+            }
+          ]
         }
-      },
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "Project GVM",
-        "url": "https://www.projectgvm.com.au/"
-      }
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.projectgvm.com.au/"
-      },{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Learn",
-        "item": "https://www.projectgvm.com.au/learn/"
-      },{
-        "@type": "ListItem",
-        "position": 3,
-        "name": "Calculator",
-        "item": "https://www.projectgvm.com.au/learn/calculator/"
-      }]
+      ]
     }
     </script>
+
     
 </head>
 
@@ -256,6 +263,7 @@
     <script src="/assets/js/main.js"></script>
 </body>
 </html>
+
 
 
 
