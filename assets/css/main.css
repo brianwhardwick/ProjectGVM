@@ -682,7 +682,7 @@ img.hero-logo {
   }
 
   .main-header h1 { 
-    font-size: 48px;
+    font-size: 2rem;
     font-weight: 700; 
     margin-bottom: 5px; 
     letter-spacing: -0.5px;
@@ -691,7 +691,7 @@ img.hero-logo {
 
   .main-header .h1-subtitle {
     display: block;    
-    font-size: 20px;    
+    font-size: 1.25rem;    
     font-weight: 400; 
     opacity: 0.9;
     margin-top: 5px;  
@@ -735,7 +735,7 @@ img.hero-logo {
 /* Mobile */
 @media (max-width: 768px) {
   .main-header h1 {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
   .main-header h1-subtitle {
     font-size: 1rem;
