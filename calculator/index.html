@@ -20,8 +20,6 @@
   <meta name="twitter:title" content="Free 4WD GVM Calculator - Vehicle Weight <meta property="twitter:title" content="Free 4WD GVM Calculator - Start Calculating Now" Axle Loads">
   <meta name="twitter:description" content="Free Australian 4WD GVM calculator to estimate payload, axle loads and vehicle weight. Built using real vehicle geometry to help you stay legal, safe and compliant.">
   <meta property="twitter:image" content="https://www.projectgvm.com.au/assets/img/brand/og-image.jpg">
-  
-  <link rel="icon" href="/assets/img/brand/favicon-32x32.svg" type="image/svg+xml">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b5394">
@@ -54,6 +52,21 @@
           "name": "Project GVM",
           "url": "https://www.projectgvm.com.au/"
         }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.projectgvm.com.au/"
+        },{
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Calculator",
+          "item": "https://www.projectgvm.com.au/calculator/"
+        }]
       },
       {
         "@type": "FAQPage",
@@ -621,6 +634,7 @@ footer {
 
 </style>
 </head>
+  
 <body>
 
 <nav class="site-nav">
@@ -643,10 +657,20 @@ footer {
 
 <div class="gvm-wrapper">
   
-  <div class="gvm-header">
-    <h1>4WD GVM Calculator</h1>
-    <p>Check your vehicle weight, payload, and axle loads in seconds.</p>
-  </div>
+    <div class="main-header">
+        
+        <nav aria-label="breadcrumb" class="breadcrumb">
+            <ol>
+                <li><a href="/">Home</a></li>
+                <li><a href="/learn/">Learn</a></li>
+                <li aria-current="page">Accessories</li>
+            </ol>
+        </nav>
+        <h1>
+            Top 4WD Accessories
+            <span class="h1-subtitle">(That Won't Kill Your Payload)</span>
+        </h1>
+    </div>
 
   <div class="seo-content">
     <h2>About the Calculator</h2>
@@ -1002,6 +1026,7 @@ document.querySelectorAll('.faq-item details').forEach(faq => {
 </body>
 
 </html>
+
 
 
 
