@@ -724,9 +724,9 @@ img.hero-logo {
 
 
 .breadcrumb {
-    padding: 10px 10px; /* Matches your Nav padding for perfect alignment */
+    padding: 5px 5px; /* Matches your Nav padding for perfect alignment */
     margin-bottom: -60px;
-    font-size: 0.7rem;
+    font-size: 0.5rem;
     color: var(--color-white);
     opacity: 0.7;
 

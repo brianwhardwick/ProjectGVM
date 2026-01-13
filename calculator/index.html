@@ -263,9 +263,9 @@
       </div>
 
 
- <div class="seo-footer">
-
-    <div class="seo-footer-card">
+  <div class="container">
+      
+      <section class="card">
 
       <h2>Built Using Real Vehicle Geometry</h2>
       <p>
@@ -315,7 +315,7 @@
 
 
    
-   <div class="seo-footer-card">
+   <div class="card">
       <h2>Supported 4WD Platforms</h2>
       <p>
         Stop guessing with generic calculators. Project GVM includes pre-loaded chassis data, axle limits, and kerb weights for Australia's most popular touring vehicles.
@@ -370,7 +370,7 @@
 
 
 
-    <div class="seo-footer-card">
+    <div class="card">
       <h2>Vehicle Weight Glossary</h2>
       <dl>
         <dt>Tare Mass</dt>
@@ -391,7 +391,7 @@
 
 
 
-    <div class="seo-footer-card">
+    <div class="card">
       <h2>Common GVM Questions</h2>
       
 <div class="faq-item">
@@ -428,82 +428,7 @@
     </div>
   </div>
 
-
-
-<script>
-  // DOM Elements
-  const checkbox = document.getElementById("acknowledge");
-  const button = document.getElementById("startBtn");
-  const appContainer = document.getElementById("app-container");
-  const iframe = document.getElementById("gvm-frame");
-  const loader = document.getElementById("loader");
-  const introContent = document.querySelector(".seo-content");
-  const seoFooter = document.querySelector(".seo-footer"); 
-  
-  const APP_URL = "https://gvmcalculator.streamlit.app/?embed=true&theme=light";
-
-  // 1. Checkbox Logic
-checkbox.addEventListener("change", () => {
-  button.disabled = !checkbox.checked;
-  if(checkbox.checked){
-    gtag('event', 'disclaimer_checkbox_checked', {
-      'event_category': 'GVM Calculator',
-      'event_label': 'Disclaimer Checkbox',
-      'value': 1
-    });
-  }
-});
-
-
-  // 2. Start Button Logic
-button.addEventListener("click", () => {
-  gtag('event', 'start_calculator_clicked', {
-    'event_category': 'GVM Calculator',
-    'event_label': 'Start Calculator',
-    'value': 1
-  });
-
-  introContent.style.display = "none";
-  seoFooter.style.display = "none";
-  appContainer.style.display = "block";
-
-  document.querySelector(".gvm-wrapper").classList.add("app-active");
-  document.querySelector(".main-header").classList.add("app-active");
-  iframe.src = APP_URL;
-  window.scrollTo({ top: 0 });
-
-  // Optional: micro-feedback
-  button.textContent = "Loading your vehicle...";
-  button.disabled = true;
-});
-
-
-
-  // 3. Hide Spinner on Load
-iframe.addEventListener("load", () => {
-  setTimeout(() => {
-    loader.style.display = "none";
-    gtag('event', 'iframe_loaded', {
-      'event_category': 'GVM Calculator',
-      'event_label': 'Calculator Loaded'
-    });
-  }, 1000);
-});
-
-document.querySelectorAll('.faq-item details').forEach(faq => {
-  faq.addEventListener('toggle', e => {
-    if(faq.open){
-      gtag('event', 'faq_opened', {
-        'event_category': 'GVM Calculator',
-        'event_label': faq.querySelector('summary').textContent
-      });
-    }
-  });
-});
-
-
-</script>
-
+</section>
 
     <div id="footer-placeholder"></div>
     <script src="/assets/js/main.js"></script>
