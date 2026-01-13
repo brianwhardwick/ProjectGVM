@@ -1,1430 +1,429 @@
-/* --- 1. Variables & Root --- */
-:root {
-  /* Brand Colors */
-  --color-primary: #0b5394;
-  --color-secondary: #eeeff4;
-  --color-accent: #fff8e1;
-  
-  /* Text & Surface */
-  --color-text-main: #333333;
-  --color-text-muted: #666666;
-  --color-bg-light: #f4f7f6;
-  --color-white: #ffffff;
-  
-  /* Spacing & Borders */
-  --radius-lg: 12px;
-  --radius-md: 8px;
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
-  --container-max: 1100px;
-  --transition: all 0.2s ease-in-out;
+/**
 
-  /* Card Properties */
-  --card-radius: 8px;
-  --card-internal-padding: 30px;
-}
+ * Project GVM - Main Site Logic
 
+ * Optimized for GitHub Pages (Shared Components & Calculator Launcher)
 
+ */
 
+const GVMApp = (function() {
 
+    'use strict';
 
-/* --- 2. Reset & Base --- */
-*, *::before, *::after { box-sizing: border-box; }
 
-body {
-  padding-top: 65px; /* same as nav height */
-  margin: 0;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--color-text-main);
-  background-color: var(--color-secondary); /* Keeps your signature blue background */
-  /* FLEXBOX STICKY FOOTER SETUP */
-  min-height: 100vh;        /* Keeps body full height */
-  display: flex;            /* Turns on flexbox */
-  flex-direction: column;   /* Stack elements vertically */
-}
 
-h1 {
-  font-size: 3rem;      /* 48px */
-  line-height: 1.1;     /* Tight spacing for big titles */
-  margin-bottom: 1.5rem;
-  scroll-margin-top: 70px;
-}
+    // --- 1. Configuration ---
 
-h2 {
-  font-size: 2.25rem;   /* 36px */
-  line-height: 1.2;
-  margin-bottom: 1.25rem;
-  scroll-margin-top: 70px;
-}
+    const config = {
 
-h3 {
-  font-size: 1.5rem;    /* 24px */
-  line-height: 1.3;
-  margin-bottom: 1rem;
-  scroll-margin-top: 70px;
-}
+        appUrl: "https://gvmcalculator.streamlit.app/?embed=true&theme=light",
 
-p, li {
-  font-size: 1rem;      /* 16px */
-  margin-bottom: 1rem;
-}
+        selectors: {
 
-img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
+            headerPlaceholder: "#header-placeholder",
 
-@media (max-width: 768px) {
-  h1 { font-size: 2.25rem; } /* Shrinks to 36px on mobile */
-  h2 { font-size: 1.75rem; } /* Shrinks to 28px on mobile */
-  h3 { font-size: 1.25rem; } /* Shrinks to 20px on mobile */
-}
+            footerPlaceholder: "#footer-placeholder",
 
+            year: "#year",
 
+            checkbox: "#acknowledge",
 
+            startBtn: "#startBtn",
 
+            appContainer: "#app-container",
 
+            iframe: "#gvm-frame",
 
-.no-style-link {
-    color: inherit;          /* keep same as surrounding text */
-    text-decoration: none;   /* remove underline */
-}
+            loader: "#loader",
 
-.no-style-link:hover {
-    color: inherit;          /* prevent color change on hover */
-}
+            intro: ".card-intro",
 
+            wrapper: ".main-wrapper",
 
+            faqDetails: ".faq-item details",
 
+            // Navigation Selectors
 
+            navToggle: ".navbar-toggle",
 
+            navMenu: ".nav-menu",
 
+            navLinks: ".nav-links, .dropdown-menu a"
 
-
-/* --- Navigation Bar Styles --- */
-.site-nav {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  height: 65px;
-  display: flex;
-  align-items: center;
-  padding: 10px 24px;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-}
-
-.nav-content {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: var(--container-max); /* Ensures logo/menu align with page content */
-}
-
-/* Brand/Logo */
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.5rem;
-  font-weight: 400;
-  text-decoration: none;
-  color: var(--color-white);
-  z-index: 1002; /* Ensures brand stays above mobile menu */
-}
-
-.nav-brand img {
-  height: 40px;
-  width: auto;
-}
-
-/* --- Desktop Menu Styles --- */
-.nav-menu {
-  display: flex;
-  gap: 30px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-}
-
-.nav-links {
-  position: relative;
-  color: var(--color-white);
-  text-decoration: none;
-  font-size: 18px; /* Adjusted for better fit */
-  font-weight: 500;
-  padding: 5px 0;
-  transition: opacity 0.2s;
-}
-
-/* Underline Animation (Desktop Only) */
-@media (min-width: 769px) {
-  .nav-links::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--color-white);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-  }
-  .nav-links:hover::after,
-  .nav-links.active::after {
-    transform: scaleX(1);
-  }
-}
-
-/* --- Dropdown Styles (Desktop) --- */
-.nav-dropdown {
-  position: relative;
-  padding-bottom: 0; /* Fixes hover gap issues */
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%; /* Position right below parent */
-  left: -15px; /* Slight offset alignment */
-  background-color: var(--color-white);
-  border-radius: var(--radius-md);
-  padding: 10px 0;
-  min-width: 220px;
-  list-style: none;
-  box-shadow: var(--shadow-md);
-  
-  /* Hidden by default */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: all 0.2s ease;
-}
-
-.dropdown-menu li a {
-  display: block;
-  padding: 10px 20px;
-  color: var(--color-text-main);
-  text-decoration: none;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
-
-.dropdown-menu li a:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-primary);
-}
-
-/* Hover Logic for Desktop */
-@media (min-width: 769px) {
-  .nav-dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-}
-
-/* --- Hamburger Toggle Button (Hidden on Desktop) --- */
-.navbar-toggle {
-  display: none;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1002; /* Above the menu overlay */
-}
-
-.hamburger-bar {
-  display: block;
-  width: 26px;
-  height: 3px;
-  margin: 5px 0;
-  background-color: var(--color-white);
-  border-radius: 2px;
-  transition: all 0.3s ease-in-out;
-}
-
-/* --- MOBILE STYLES (Max-width 768px) --- */
-@media (max-width: 768px) {
-  
-  /* 1. Show the Toggle Button */
-  .navbar-toggle {
-    display: block;
-  }
-
-  /* 2. Transform the Menu into a Drawer */
-  .nav-menu {
-    position: fixed;
-    top: 65px; /* Height of nav bar */
-    left: 0;
-    width: 100%;
-    height: auto;
-    background-color: var(--color-primary); /* Blue background */
-    flex-direction: column;
-    align-items: flex-start; /* Left align text */
-    padding: 0;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 10px 10px rgba(0,0,0,0.1);
-    
-    /* Hide logic */
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.4s ease-in-out;
-  }
-
-  /* 3. Active State (Added via JS) */
-  .nav-menu.active {
-    max-height: 100vh; /* Allow it to grow */
-    opacity: 1;
-    padding-bottom: 30px;
-    overflow-y: auto; /* Scroll if menu is too long */
-  }
-
-  /* 4. Link Styling for Mobile */
-  .nav-menu > li {
-    width: 100%;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .nav-links {
-    display: block;
-    padding: 15px 24px;
-    font-size: 1.1rem;
-    width: 100%;
-  }
-
-  .nav-links:hover {
-    background-color: rgba(255,255,255,0.05);
-  }
-
-  /* 5. Mobile Dropdown Handling */
-  /* We make the dropdown static so it sits naturally inside the list */
-  .dropdown-menu {
-    position: static;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    box-shadow: none;
-    background-color: rgba(0,0,0,0.15); /* Slightly darker blue area */
-    width: 100%;
-    padding: 0;
-    min-width: unset;
-    border-radius: 0;
-  }
-
-  .dropdown-menu li a {
-    color: var(--color-white); /* White text on blue bg */
-    padding-left: 45px; /* Indent sub-items */
-    font-size: 1rem;
-    padding-top: 12px;
-    padding-bottom: 12px;
-  }
-
-  .dropdown-menu li a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: var(--color-white);
-  }
-
-  /* 6. Hamburger Animation (X Shape) */
-  .navbar-toggle.active .hamburger-bar:nth-child(2) {
-    opacity: 0;
-  }
-  .navbar-toggle.active .hamburger-bar:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  .navbar-toggle.active .hamburger-bar:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-/* --- HOMEPAGE BIG IMAGE --- */
-
-/* --- EXISTING STYLES (Keep these as they are) --- */
-
-/* --- UPDATED HERO SECTION --- */
-.hero {
-  position: relative;
-  width: 100%;
-  
-  /* CHANGED: Removed fixed 'height' and 'max-height'. 
-     Added 'auto' so it grows with content. */
-  height: auto;           
-  min-height: 50vh;       /* Keeps the tall look on large screens */
-  
-  /* Added padding so content doesn't hit the edges on moderate screens */
-  padding-top: 40px;
-  padding-bottom: 60px;   
-  
-  background-image: url("/assets/img/home/home-picture.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  
-  display: flex;
-  align-items: center;    /* CHANGED: Centers content vertically */
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5); 
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 1500px; 
-  margin: 0 auto;
-  padding: 10px;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr; 
-  gap: 60px;
-  align-items: start;
-}
-
-.hero-left {
-  color: var(--color-white);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-}
-
-img.hero-logo {
-  width: 100%;           
-  max-width: 300px;      
-  height: auto;          
-  margin-bottom: 30px;
-  display: block;
-}
-
-.hero-button {
-  display: inline-block;
-  padding: 16px 32px;
-  background: var(--color-secondary);
-  color: var(--color-text-main);
-  font-weight: 700;
-  font-size: 1.5rem;
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  
-  /* Button Physics */
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-    0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-  cursor: pointer; 
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s;
-}
-
-.hero-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.hero-button:active {
-  transform: translateY(0); 
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-  background: #f9f9f9; 
-}
-
-.hero-button:focus-visible {
-  outline: 2px solid var(--text-color);
-  outline-offset: 2px;
-}
-
-.hero-right {
-  color: var(--color-white);
-  border-left: 0px solid var(--color-accent); 
-  padding-left: 30px;
-  padding-top: 5px;
-}
-
-.hero-quote {
-  font-size: 1.25rem;
-  line-height: 1.26;
-  font-style: italic;
-  font-weight: 500;
-  margin-bottom: 20px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.hero-quote-author {
-  font-size: 1rem;
-  opacity: 1;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.hero-quote-list {
-  list-style-type: disc; /* standard dot bullets */
-  padding-left: 1.5rem;  /* space for bullets */
-  margin: 0 0 0px 0;    /* spacing similar to hero-quote */
-  font-size: 1.55rem;    /* same size as quote text */
-  line-height: 1.4;      /* match quote spacing */
-}
-
-.hero-quote-list li {
-  margin-bottom: 0.5rem; /* space between list items */
-}
-
-/* --- UPDATED MOBILE RESPONSIVENESS --- */
-@media (max-width: 768px) {
-  
-  /* 1. Fix the container height so image expands with content */
-  .hero {
-    height: auto;        /* Allow container to grow freely */
-    min-height: auto;    /* Remove the 500px minimum force */
-    padding-top: 80px;   /* Add breathing room top */
-    padding-bottom: 80px;/* Add breathing room bottom */
-    align-items: center; /* Center content vertically in the new auto height */
-  }
-
-  /* 2. Stack the grid */
-  .hero-grid {
-    grid-template-columns: 1fr; 
-    gap: 40px;
-    text-align: center;
-  }
-
-  .hero-left {
-    align-items: center; 
-  }
-
-  /* 3. Resize logo so it doesn't push content too far down */
-  img.hero-logo {
-    max-width: 300px; /* Smaller max-width for mobile */
-  }
-
-  /* 4. Resize button slightly so it fits better on small screens */
-  .hero-button {
-    font-size: 1.2rem;   /* Slightly smaller text */
-    padding: 14px 24px;  /* Slightly tighter padding */
-    width: 100%;         /* Optional: Makes button span full width on mobile */
-    max-width: 350px;    /* Prevents it from getting absurdly wide */
-  }
-
-  .hero-right {
-    border-left: none;   
-    border-top: 2px solid var(--color-accent);
-    padding-left: 0;
-    padding-top: 30px;
-  }
-}
-
-
-
-
-
-
-
-
-/* home page below hero image*/
-
-
-/* Layout */
-.home-content-section {
-  background: #f4f6f8;
-  padding: 40px 0;
-}
-
-.home-container {
-  background: #f4f6f8;
-  max-width: 1500px;
-  margin: auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 30px;
-}
-
-/* Blog Section */
-.blog-section h2 {
-  margin-bottom: 20px;
-  
-}
-
-.blog-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.blog-card {
-  background: #ffffff;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-}
-
-.blog-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.blog-card h3 {
-  font-size: 1.1rem;
-  margin: 15px;
-}
-
-.blog-card p {
-  margin: 0 15px 15px;
-  color: #555;
-  font-size: 1rem;
-  flex-grow: 1;
-}
-
-.blog-card .btn {
-  margin: 15px;
-  padding: 10px;
-  text-align: center;
-  background: #d36f12;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.blog-card .btn:hover {
-  background: #b7741c;
-}
-
-/* Resources Section */
-.resources-section {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.resources-section h2 {
-  margin-bottom: 15px;
-}
-
-.resources-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 20px;
-}
-
-.resources-list li {
-  margin-bottom: 10px;
-}
-
-.resources-list a {
-  text-decoration: none;
-  color: #1a4fa3;
-  font-weight: 600;
-}
-
-.resources-list a:hover {
-  text-decoration: underline;
-}
-
-/* Ad Box */
-.ad-box {
-  background: #e0e0e0;
-  text-align: center;
-  padding: 30px 10px;
-  font-size: 0.9rem;
-  color: #555;
-  border-radius: 4px;
-}
-
-
-
-/* Responsive */
-@media (max-width: 900px) {
-  /* 1. Fix: Matches the class name defined at the top (.home-container) */
-  .home-container {
-    grid-template-columns: 1fr;
-  }
-
-  /* 2. New: Target the sidebar and move it to the top */
-  /* Assuming the sidebar is the second direct child of .home-container */
-  .home-container > :nth-child(2) {
-    order: -1; 
-    margin-bottom: 30px; /* Adds spacing between aside and cards */
-  }
-
-  .blog-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-
-/* Responsive */
-@media (max-width: 600px) {
-  /* 1. Fix: Matches the class name defined at the top (.home-container) */
-  .home-container {
-    grid-template-columns: 1fr;
-  }
-
-  .blog-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-
-
-
-
-
-
-
-/* --- 3. Layout Components --- */
-  .main-wrapper {
-    color: var(--color-text-main);
-    line-height: 1.45;
-    padding: 0 15px;
-    padding-bottom: 20px; /* Add breathing room for footer */
-    /* STICKY FOOTER FIX */
-    flex: 1;  /* <--- ADD THIS LINE */
-    width: 100%; /* Ensures it doesn't collapse horizontally in some browsers */
-  }
-
-  /* CHANGED: When active, lock the wrapper to the screen size */
-  .main-wrapper.app-active {
-    height: calc(100dvh - 50px);
-    overflow: hidden;
-    padding-bottom: 0;
-  }
-
-
-
-
-.breadcrumb {
-    padding: 10px 10px; /* Matches your Nav padding for perfect alignment */
-    margin-bottom: -60px;
-    font-size: 0.7rem;
-    color: var(--color-white);
-    opacity: 0.7;
-
-    width: 100%;
-    max-width: var(--container-max); /* Constrains width to 1100px */
-    margin-top: 0;
-    margin-left: auto;   /* Push from left */
-    margin-right: auto;  /* Push from right */
-    margin-bottom: -60px; /* Keep your existing overlap */
-    box-sizing: border-box; /* Ensures padding doesn't make it wider than 1100px */
-}
-.breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-}
-.breadcrumb li {
-    display: flex;
-    align-items: center;
-}
-/* The separator (/) */
-.breadcrumb li + li::before {
-    content: "/";
-    padding: 0 8px;
-}
-.breadcrumb a {
-    color: var(--color-white);
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-}
-.breadcrumb a:hover {
-    text-decoration: underline;
-    opacity: 0.8;
-}
-/* The current page (non-clickable) */
-.breadcrumb li[aria-current="page"] {
-    font-weight: 500;
-}
-
-@media (max-width: 850px) {
-  .breadcrumb {
-    display: none;
-  }
-}
-
-
-
-
-
-
-  /* --- Header Section --- */
-  .main-header {
-    background-color: var(--color-primary);
-    text-align: center;
-    color: var(--color-white);
-    margin-top: -10px;
-    margin-bottom: 0px;
-    padding-bottom: 15px; 
-    border-radius: 0px;
-  }
-
-  .main-header h1 { 
-    font-size: 3rem;
-    font-weight: 700; 
-    margin-bottom: 5px; 
-    letter-spacing: -0.5px;
-    opacity: 0.95;
-  }
-
-  .main-header .h1-subtitle {
-    display: block;    
-    font-size: 1.5rem;    
-    font-weight: 400; 
-    opacity: 0.9;
-    margin-top: 5px;  
-    
-    max-width: 1000px; 
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .main-header p { 
-    font-size: 20px;
-    opacity: 0.9;
-    max-width: 600px; 
-    margin-bottom: 0px; 
-    margin: 0 auto 0 auto;
-  }
-  
-  /* Hide header when app is active */
-  .gvm-wrapper.app-active .gvm-header,
-  .gvm-wrapper.app-active .main-header,
-  .main-wrapper.app-active .main-header { 
-      display: none; 
-  }
-
-/* --- Responsive Tweaks --- */
-
-/* Tablet / small desktop */
-@media (max-width: 1024px) {
-  .main-header h1 {
-    font-size: 2rem;
-  }
-  .main-header .h1-subtitle {
-    font-size: 1.2rem;
-  }
-  .main-header {
-    padding-top: 15px;
-    padding-bottom: 25px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .main-header h1 {
-    font-size: 1.5rem;
-  }
-  .main-header .h1-subtitle {
-    font-size: 1.1rem;
-  }
-  .main-header {
-    padding-top: 0px;
-    padding-bottom: 10px;
-  }
-
-  #app-container {
-    height: calc(100vh - 65px);   /* fallback */
-    height: calc(100dvh - 65px);  /* preferred */
-  }
-}
-
-
-
-
-
-
-
-
-
-.container {
-  width: 100%;
-  max-width: var(--container-max);
-  margin: 0 auto;
-}
-
-/* For pages like "About" with a narrow, readable column */
-.container-narrow {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-
-
-
-
-
-
-  .card {
-    background: white;
-    width: 100%;
-    max-width: 1000px;
-    margin: 20px auto 30px auto; /* Adds spacing between cards */
-    padding: 30px;
-    border-radius: var(--card-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.5s ease-out;
-    box-sizing: border-box;
-    color: var(--color-primary)
-  }
-
-  .card h2 {
-    font-size: 1.6rem;
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 15px;
-  }
-
-  .card h3 {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    margin-top: 20px;
-    margin-bottom: 6px;
-  }
-
-  .card p {
-    margin-bottom: 6px;
-    color: #4a4a4a;
-  }
-
-  .card ul {
-    margin-bottom: 6px;
-    margin-top: 0;
-    padding-left: 20px;
-    color: #4a4a4a;
-  }
-  
-  .card li {
-    margin-bottom: 4px;
-  }
-
-  /* Optional: Removes margin from the very last card so it doesn't push the footer too far */
-  .card:last-child {
-      margin-bottom: 0;
-  }
-
-
-
-
-
-
-
-
-
-
-/* === NEW CSS FOR WRAPPING IMAGES === */
-
-        /* 1. Base style for the image container */
-        .article-image {
-            width: 40%; /* Image takes up 40% of the width */
-            margin-bottom: 1rem;
         }
 
-        .article-image img {
-            width: 100%; /* Ensure image fills the container */
-            height: auto;
-            border-radius: 6px; /* Optional: looks nice */
+    };
+
+
+
+    // --- 2. Mobile Menu Logic (Moved Here) ---
+
+    const initMobileMenu = () => {
+
+        const toggleBtn = document.querySelector(config.selectors.navToggle);
+
+        const navMenu = document.querySelector(config.selectors.navMenu);
+
+
+
+        if (toggleBtn && navMenu) {
+
+            // Toggle Click
+
+            toggleBtn.addEventListener('click', () => {
+
+                navMenu.classList.toggle('active');
+
+                toggleBtn.classList.toggle('active');
+
+            });
+
+
+
+            // Close menu when a link is clicked
+
+            const links = document.querySelectorAll(config.selectors.navLinks);
+
+            links.forEach(link => {
+
+                link.addEventListener('click', () => {
+
+                    navMenu.classList.remove('active');
+
+                    toggleBtn.classList.remove('active');
+
+                });
+
+            });
+
         }
 
-        /* 2. Logic for Alternating Images */
-        
-        /* ODD images (1st, 3rd) float RIGHT */
-        .article-image:nth-of-type(odd) {
-            float: right;
-            margin-left: 20px; /* Space between text and image */
-            margin-right: 0px; /* Space between image edge */
-            clear: right;
+    };
+
+
+
+    // --- 3. UI Methods ---
+
+
+
+    const initDynamicYear = () => {
+
+        const yearEl = document.querySelector(config.selectors.year);
+
+        if (yearEl) {
+
+            yearEl.textContent = new Date().getFullYear();
+
         }
 
-        /* EVEN images (2nd, 4th) float LEFT */
-        .article-image:nth-of-type(even) {
-            float: left;
-            margin-right: 20px; /* Space between text and image */
-            margin-left: 0px; /* Space between image edge */
-            clear: left;
+    };
+
+
+
+    const trackEvent = (name, label) => {
+
+        if (typeof gtag === 'function') {
+
+            gtag('event', name, {
+
+                'event_category': 'GVM Calculator',
+
+                'event_label': label
+
+            });
+
         }
 
-        /* 3. Safety: Ensure Headings always start on a new line */
-        .card h2, .card h3 {
-            clear: both;
-            padding-top: 10px;
+    };
+
+
+
+    // --- FAQ Logic ---
+
+    const initFAQ = () => {
+
+        const acc = document.getElementsByClassName("faq-question");
+
+        for (let i = 0; i < acc.length; i++) {
+
+            acc[i].addEventListener("click", function() {
+
+                this.classList.toggle("active");
+
+                const panel = this.nextElementSibling;
+
+                if (panel.classList.contains("open")) {
+
+                    panel.classList.remove("open");
+
+                } else {
+
+                    panel.classList.add("open");
+
+                }
+
+            });
+
         }
 
-        /* 4. Mobile Responsiveness */
-        /* On small screens, disable wrapping so it stacks vertically */
-        @media (max-width: 768px) {
-            .article-image {
-                float: none !important;
-                width: 100%;
-                margin: 20px 0;
+    };
+
+
+
+    const launchCalculator = () => {
+
+        const btn = document.querySelector(config.selectors.startBtn);
+
+        const container = document.querySelector(config.selectors.appContainer);
+
+        const iframe = document.querySelector(config.selectors.iframe);
+
+        const intro = document.querySelector(config.selectors.intro);
+
+        const wrapper = document.querySelector(config.selectors.wrapper);
+
+
+
+        if (!btn || !container) return;
+
+
+
+        trackEvent('start_calculator', 'Launch');
+
+
+
+        if (intro) intro.style.display = "none";
+
+        container.style.display = "block";
+
+        if (wrapper) wrapper.classList.add('app-active');
+
+
+
+        iframe.src = config.appUrl;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+
+        btn.textContent = "Loading Calculator...";
+
+        btn.disabled = true;
+
+    };
+
+
+
+    // --- 4. Event Binding ---
+
+
+
+    const bindEvents = () => {
+
+        const checkbox = document.querySelector(config.selectors.checkbox);
+
+        const startBtn = document.querySelector(config.selectors.startBtn);
+
+        const iframe = document.querySelector(config.selectors.iframe);
+
+
+
+        if (checkbox && startBtn) {
+
+            checkbox.addEventListener('change', (e) => {
+
+                startBtn.disabled = !e.target.checked;
+
+            });
+
+        }
+
+
+
+        if (startBtn) {
+
+            startBtn.addEventListener('click', launchCalculator);
+
+        }
+
+
+
+        if (iframe) {
+
+            iframe.addEventListener('load', () => {
+
+                const loader = document.querySelector(config.selectors.loader);
+
+                if (loader) {
+
+                    setTimeout(() => {
+
+                        loader.style.opacity = '0';
+
+                        setTimeout(() => loader.style.display = "none", 500);
+
+                    }, 1000);
+
+                }
+
+            });
+
+        }
+
+
+
+        // Native Details/Summary FAQ Tracking
+
+        document.addEventListener('toggle', (e) => {
+
+            if (e.target.tagName === 'DETAILS' && e.target.open) {
+
+                const summary = e.target.querySelector('summary');
+
+                if (summary) trackEvent('faq_opened', summary.textContent);
+
             }
+
+        }, true);
+
+    };
+
+
+
+    /**
+
+     * Injects header and footer into the page.
+
+     */
+
+    const loadSharedComponents = async () => {
+
+        const components = [
+
+            { id: config.selectors.headerPlaceholder, file: '/assets/components/header.html' },
+
+            { id: config.selectors.footerPlaceholder, file: '/assets/components/footer.html' }
+
+        ];
+
+
+
+        for (const item of components) {
+
+            const el = document.querySelector(item.id);
+
+            if (el) {
+
+                try {
+
+                    const response = await fetch(item.file);
+
+                    if (!response.ok) throw new Error(`Could not find ${item.file}`);
+
+                   
+
+                    const html = await response.text();
+
+                    el.innerHTML = html;
+
+
+
+                    // --- COMPONENT LOADED HOOKS ---
+
+                   
+
+                    if (item.id === config.selectors.headerPlaceholder) {
+
+                        highlightActiveLink();
+
+                        initMobileMenu(); // <--- FIXED: Init Menu AFTER injection
+
+                    }
+
+
+
+                    if (item.id === config.selectors.footerPlaceholder) {
+
+                        initDynamicYear();
+
+                    }
+
+
+
+                } catch (err) {
+
+                    console.warn("Component load failed:", err);
+
+                }
+
+            }
+
         }
 
+    };
 
 
 
+    /**
 
+     * Checks the URL and highlights the correct menu item
 
+     */
 
+    const highlightActiveLink = () => {
 
+        const currentPath = window.location.pathname.replace(/\/$/, "");
 
+        const navLinks = document.querySelectorAll('.nav-links');
 
 
 
+        navLinks.forEach(link => {
 
+            const linkHref = link.getAttribute('href').replace(/\/$/, "");
 
 
 
+            if (currentPath === linkHref || (currentPath === "" && linkHref === "")) {
 
+                link.classList.add('active');
 
+            }
 
+            else if (currentPath.includes("/learn") && linkHref.includes("/learn")) {
 
+                link.classList.add('active');
 
-/* --- 5. UI Components --- */
+            }
 
+        });
 
+    };
 
+   
 
+    // --- 5. Public Init ---
 
-/* --- Main Wrapper --- */
-  .gvm-wrapper {
-    /* CHANGED: Let content define height initially */
-    min-height: calc(100vh - 50px);
-    color: var(--text-color);
-    line-height: 1.45;
-    padding: 0 15px;
-    padding-bottom: 20px; /* Add breathing room for footer */
-  }
+    return {
 
-  /* CHANGED: When active, lock the wrapper to the screen size */
-  .gvm-wrapper.app-active {
-    height: calc(100dvh - 65px);
-    overflow: hidden;
-    padding-bottom: 0;
-  }
+        init: function() {
 
-  /* --- Header Section --- */
-  .gvm-header {
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-    margin-top: 15px;
-  }
-  .gvm-header h1 { font-size: 48px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.5px; }
-  .gvm-header p { font-size: 20px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-  
-  /* Hide header when app is active */
-  .gvm-wrapper.app-active .gvm-header { display: none; }
+            loadSharedComponents();
 
+            bindEvents();
 
+            initFAQ(); // Initialize the custom FAQ script if it exists
 
-  /* --- Main Content Card (Intro) --- */
-.seo-content {
-    background: white;
-    width: 100%;             /* Added: Ensures it fills space on small screens */
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: var(--card-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.5s ease-out;
-    box-sizing: border-box;  /* Added: includes padding in calculation */
-  }
-
-  .seo-content h2 {
-    font-size: 1.6rem;
-    color: var(--color-primary);
-    margin-top: 0;
-    margin-bottom: 15px;
-  }
-
-  .seo-content h3 {
-    font-size: 1.2rem;
-    color: var(--color-primary);
-    margin-top: 20px;
-    margin-bottom: 6px;
-  }
-
-  .seo-content p {
-    margin-bottom: 6px;
-    color: #4a4a4a;
-  }
-
-  .seo-content ul {
-    margin-bottom: 6px;
-    margin-top: 0;
-    padding-left: 20px;
-    color: #4a4a4a;
-  }
-  
-  .seo-content li {
-    margin-bottom: 4px;
-  }
-
-  /* --- Disclaimer Box --- */
-  .disclaimer-box {
-    background-color: #fff8e1;
-    border-left: 5px solid #ffc107;
-    padding: 15px;
-    border-radius: 4px;
-    margin: 20px 0;
-  }
-
-  .disclaimer-box h3 {
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1.05rem;
-    color:  #856404;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .disclaimer-box p {
-    margin-bottom: 0;
-    font-size: 0.95rem;
-    color: #856404;
-  }
-
-  /* --- Action Area --- */
-  .start-box {
-    text-align: center;
-    margin-top: 15px;
-    margin-bottom: 0;
-    padding-top: 2px;
-    border-top: 1px solid #eee;
-  }
-
-  .checkbox-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    user-select: none;
-    padding: 8px;
-    border-radius: 6px;
-    transition: background var(--transition-speed);
-  }
-
-  .checkbox-label:hover {
-    background-color: #f0f4f8;
-  }
-
-  .start-btn {
-    display: inline-block;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 14px 40px;
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    margin-top: 15px;
-    box-shadow: 0 4px 6px rgba(11, 83, 148, 0.2);
-    transition: all var(--transition-speed);
-  }
-
-  .start-btn:hover:not(:disabled) {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(11, 83, 148, 0.3);
-  }
-
-  .start-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    opacity: 0.7;
-    box-shadow: none;
-  }
-
-
-  /* --- App Container --- */
-  #app-container {
-    display: none;
-    width: 100%;
-    height: calc(100dvh - 70px); /* was 92dvh; */
-    overflow: hidden;
-    position: relative;
-    background: white;
-    border-radius: var(--card-radius);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  }
-
-  iframe {
-    position: absolute;
-    top: -40px; 
-    left: -15px;
-    width: calc(100% + 30px);
-    height: calc(100% + 78px);
-    border: none;
-    z-index: 1;
-  }
-
-  /* --- Loader --- */
-  .loader-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-  }
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 15px;
-  }
-
-  .loading-text {
-    font-weight: 500;
-    color: var(--color-primary);
-    font-size: 1rem;
-  }
-
-  /* --- SEO Footer Section --- */
-.seo-footer {
-    width: 100%;
-    margin: 30px auto 0;
-    box-sizing: border-box; /* Good practice to add here too */
-  }
-
-  .seo-content, .seo-footer-card {
-    background: white;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto 30px auto; /* Adds spacing between cards */
-    padding: 30px;
-    border-radius: var(--card-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  }
-
-  .seo-footer h2 {
-    font-size: 1.4rem;
-    color: var(--color-primary);
-    margin-bottom: 20px;
-    margin-top: 0;
-    text-align: left;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
- /* Definition List Styles */
-  dl { margin: 0; }
-  dt { font-weight: 600; color: var(--color-primary); margin-top: 15px; }
-  dt:first-child { margin-top: 0; }
-  dd { margin: 4px 0 0 0; color: #555; font-size: 0.95rem; }
-
-  /* FAQ Styles */
-  .faq-item {
-    border-bottom: 1px solid #eee;
-    margin-bottom: 10px;
-  }
-  .faq-item:last-child {
-    border-bottom: none;
-  }
-  .faq-item summary {
-    cursor: pointer;
-    font-weight: 600;
-    padding: 12px 0;
-    list-style: none;
-    position: relative;
-    padding-right: 30px;
-    color: #333;
-  }
-  .faq-item summary::-webkit-details-marker {
-    display: none;
-  }
-  .faq-item summary::after {
-    content: '+';
-    position: absolute;
-    right: 0;
-    font-weight: bold;
-    color: var(--color-primary);
-    font-size: 1.2rem;
-  }
-  .faq-item details[open] summary::after {
-    content: '-';
-  }
-  .faq-item p {
-    margin-top: 0;
-    padding-bottom: 15px;
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-.faq-item p a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-  }
-
-  .faq-item p a:hover {
-    text-decoration: underline;
-  }
-
-
-  .more-link {
-    text-align: center;
-    margin-top: 25px;
-    font-size: 0.95rem;
-  }
-
-  .more-link a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-  }
-
-  .more-link a:hover {
-    text-decoration: underline;
-  }
-
-  /* --- Animations --- */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  /* --- Mobile Tweaks --- */
-  @media (max-width: 768px) {
-    .gvm-header h1 { font-size: 1.6rem; }
-    .gvm-header p { font-size: 0.95rem; }
-    #app-container {
-    height: calc(100vh - 70px);   /* fallback */
-    height: calc(100dvh - 70px);  /* preferred */
-  }
-
-    .seo-content, .seo-footer-card {
-      padding: 20px 15px;
-    }
-
-    .start-btn {
-      width: 100%;
-      padding: 14px;
-    }
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-/*** --- 6. Footer --- ***/
-footer {
-    margin: 0; 
-    width: 100%;
-    padding: 30px 10px;
-    text-align: center;
-    background-color: var(--color-primary);
-    color: #ffffff;
-    border-top: none;
-    font-family: Arial, sans-serif;
-    position: relative; 
-    z-index: 10;
-  }
-
-  .footer-links {
-    margin-bottom: 10px;
-  }
-
-  .footer-links a {
-    text-decoration: none;
-    color: #ffffff; /* White text */
-    font-size: 0.9rem;
-    font-weight: 400;
-    margin: 0 5px;
-    letter-spacing: 0.5px;
-    transition: opacity 0.2s ease;
-  }
-
-  .footer-links a:hover {
-    opacity: 0.8; /* Slightly fade on hover */
-    text-decoration: underline;
-  }
-
-  .footer-copyright {
-    color: #ffffff;
-    opacity: 1.0; /* Slightly dimmed copyright text */
-    font-size: 0.75rem;
-    font-weight: 400;
-    margin: 0 5px;
-    letter-spacing: 0.5px;
-  }
-
-/* --- 7. Responsive --- */
-@media (max-width: 768px) {
-  .nav-menu { display: none; } /* Add a hamburger menu later if needed */
-  .page-header h1 { font-size: 2rem; }
-  .card { padding: 1.5rem; }
-}
+        }
 
+    };
 
 
 
+})();
 
 
 
+// Start App
 
-
-
-
+document.addEventListener('DOMContentLoaded', GVMApp.init);
