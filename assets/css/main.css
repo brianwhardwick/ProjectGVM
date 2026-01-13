@@ -38,7 +38,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   color: var(--color-text-main);
-  background-color: var(--color-primary); /* Keeps your signature blue background */
+  background-color: var(--color-secondary); /* Keeps your signature blue background */
   /* FLEXBOX STICKY FOOTER SETUP */
   min-height: 100vh;        /* Keeps body full height */
   display: flex;            /* Turns on flexbox */
@@ -102,154 +102,242 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 /* --- Navigation Bar Styles --- */
 .site-nav {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    height: 65px;
-    display: flex;
-    align-items: center;
-    padding: 10px 24px;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-    font-family: Arial, sans-serif;
-    width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  height: 65px;
+  display: flex;
+  align-items: center;
+  padding: 10px 24px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
 }
 
 .nav-content {
-    width: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--container-max); /* Ensures logo/menu align with page content */
 }
 
-/* Matches <a class="brand"> */
+/* Brand/Logo */
 .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.5rem;
-    font-weight: 400;
-    letter-spacing: -0.5px;
-    white-space: nowrap;
-    
-    /* Link Styling Overrides */
-    text-decoration: none; /* Removes underline */
-    color: white;          /* Forces text to be white */
-    cursor: pointer;
-}
-
-.nav-brand:hover {
-    opacity: 0.9;          /* Slight fade effect on hover */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--color-white);
+  z-index: 1002; /* Ensures brand stays above mobile menu */
 }
 
 .nav-brand img {
-    height: 40px;
-    width: auto;
+  height: 40px;
+  width: auto;
 }
 
+/* --- Desktop Menu Styles --- */
 .nav-menu {
-    display: flex;
-    gap: 30px;
-    list-style: none; /* Removes bullet points */
-    margin: 10px;
-    padding: 0;
+  display: flex;
+  gap: 30px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
 }
 
 .nav-links {
-    display: flex;
-    gap: 35px;
-    position: relative; /* Necessary for the underline positioning */
-    color: var(--color-white);
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: 500; /* Keep weight consistent to prevent jitter */
-    padding: 5px 5px;  /* Slightly reduced for better alignment */
-    transition: opacity 0.2s;
+  position: relative;
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: 18px; /* Adjusted for better fit */
+  font-weight: 500;
+  padding: 5px 0;
+  transition: opacity 0.2s;
 }
 
-/* The Underline (The "Google" Look) */
-.nav-links::after {
+/* Underline Animation (Desktop Only) */
+@media (min-width: 769px) {
+  .nav-links::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 2px;
     background-color: var(--color-white);
-    transform: scaleX(0); /* Hidden by default */
+    transform: scaleX(0);
     transition: transform 0.3s ease;
+  }
+  .nav-links:hover::after,
+  .nav-links.active::after {
+    transform: scaleX(1);
+  }
 }
 
-/* Hover State */
-.nav-links:hover {
-    opacity: 0.8;
-}
-
-/* Active State - Shows the underline */
-.nav-links.active {
-    opacity: 1;
-}
-
-.nav-links.active::after {
-    transform: scaleX(1); /* Reveals the underline */
-}
-
-/* Standard Content Card */
-@media (max-width: 768px) {
-    .nav-links { display: none; }
-}
-
-/* Basic Dropdown Logic */
+/* --- Dropdown Styles (Desktop) --- */
 .nav-dropdown {
-    position: relative;
-    padding-bottom: 0px;
+  position: relative;
+  padding-bottom: 0; /* Fixes hover gap issues */
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: calc(100% + 0px);
-    left: 0;
-
-    background-color: var(--color-white);
-    color: var(--color-primary);
-    border-radius: 10px;
-    padding: 3px 0;
-    min-width: 180px;
-
-    list-style: none;
-    z-index: 1000;
-
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-
-    /* Animation */
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+  position: absolute;
+  top: 100%; /* Position right below parent */
+  left: -15px; /* Slight offset alignment */
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 10px 0;
+  min-width: 220px;
+  list-style: none;
+  box-shadow: var(--shadow-md);
+  
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
 }
 
 .dropdown-menu li a {
-    display: block;
-    padding: 0px 20px 0px 20px;
-
-    color: var(--color-primary);
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 550;
-
-    transition: background-color 0.2s ease, padding-left 0.2s ease;
+  display: block;
+  padding: 10px 20px;
+  color: var(--color-text-main);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.2s;
 }
 
 .dropdown-menu li a:hover {
-    background-color: var(--color-secondary);
-    padding-left: 25px;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
 }
 
-.nav-dropdown:hover .dropdown-menu {
+/* Hover Logic for Desktop */
+@media (min-width: 769px) {
+  .nav-dropdown:hover .dropdown-menu {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0);
-    pointer-events: auto;
+  }
+}
+
+/* --- Hamburger Toggle Button (Hidden on Desktop) --- */
+.navbar-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002; /* Above the menu overlay */
+}
+
+.hamburger-bar {
+  display: block;
+  width: 26px;
+  height: 3px;
+  margin: 5px 0;
+  background-color: var(--color-white);
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* --- MOBILE STYLES (Max-width 768px) --- */
+@media (max-width: 768px) {
+  
+  /* 1. Show the Toggle Button */
+  .navbar-toggle {
+    display: block;
+  }
+
+  /* 2. Transform the Menu into a Drawer */
+  .nav-menu {
+    position: fixed;
+    top: 65px; /* Height of nav bar */
+    left: 0;
+    width: 100%;
+    height: auto;
+    background-color: var(--color-primary); /* Blue background */
+    flex-direction: column;
+    align-items: flex-start; /* Left align text */
+    padding: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+    
+    /* Hide logic */
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s ease-in-out;
+  }
+
+  /* 3. Active State (Added via JS) */
+  .nav-menu.active {
+    max-height: 100vh; /* Allow it to grow */
+    opacity: 1;
+    padding-bottom: 30px;
+    overflow-y: auto; /* Scroll if menu is too long */
+  }
+
+  /* 4. Link Styling for Mobile */
+  .nav-menu > li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .nav-links {
+    display: block;
+    padding: 15px 24px;
+    font-size: 1.1rem;
+    width: 100%;
+  }
+
+  .nav-links:hover {
+    background-color: rgba(255,255,255,0.05);
+  }
+
+  /* 5. Mobile Dropdown Handling */
+  /* We make the dropdown static so it sits naturally inside the list */
+  .dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    background-color: rgba(0,0,0,0.15); /* Slightly darker blue area */
+    width: 100%;
+    padding: 0;
+    min-width: unset;
+    border-radius: 0;
+  }
+
+  .dropdown-menu li a {
+    color: var(--color-white); /* White text on blue bg */
+    padding-left: 45px; /* Indent sub-items */
+    font-size: 1rem;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .dropdown-menu li a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--color-white);
+  }
+
+  /* 6. Hamburger Animation (X Shape) */
+  .navbar-toggle.active .hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .navbar-toggle.active .hamburger-bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .navbar-toggle.active .hamburger-bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 }
 
 
@@ -631,10 +719,19 @@ img.hero-logo {
 
 
 .breadcrumb {
-    padding: 10px 20px;
-    margin-bottom: 0px;
-    font-size: 0.9rem;
+    padding: 10px 10px; /* Matches your Nav padding for perfect alignment */
+    margin-bottom: -60px;
+    font-size: 0.7rem;
     color: var(--color-white);
+    opacity: 0.7;
+
+    width: 100%;
+    max-width: var(--container-max); /* Constrains width to 1100px */
+    margin-top: 0;
+    margin-left: auto;   /* Push from left */
+    margin-right: auto;  /* Push from right */
+    margin-bottom: -60px; /* Keep your existing overlap */
+    box-sizing: border-box; /* Ensures padding doesn't make it wider than 1100px */
 }
 .breadcrumb ol {
     list-style: none;
@@ -666,6 +763,12 @@ img.hero-logo {
     font-weight: 500;
 }
 
+@media (max-width: 850px) {
+  .breadcrumb {
+    display: none;
+  }
+}
+
 
 
 
@@ -677,7 +780,8 @@ img.hero-logo {
     text-align: center;
     color: var(--color-white);
     margin-top: -10px;
-    margin-bottom: 10px; 
+    margin-bottom: 0px;
+    padding-bottom: 15px; 
     border-radius: 0px;
   }
 
@@ -691,7 +795,7 @@ img.hero-logo {
 
   .main-header .h1-subtitle {
     display: block;    
-    font-size: 1.25rem;    
+    font-size: 1.5rem;    
     font-weight: 400; 
     opacity: 0.9;
     margin-top: 5px;  
@@ -711,7 +815,7 @@ img.hero-logo {
   
   /* Hide header when app is active */
   .gvm-wrapper.app-active .gvm-header,
-  .gvm-wrapper.app-active .main-header,   /* <--- ADD THIS LINE */
+  .gvm-wrapper.app-active .main-header,
   .main-wrapper.app-active .main-header { 
       display: none; 
   }
@@ -723,8 +827,8 @@ img.hero-logo {
   .main-header h1 {
     font-size: 2rem;
   }
-  .main-header h1-subtitle {
-    font-size: 1.1rem;
+  .main-header .h1-subtitle {
+    font-size: 1.2rem;
   }
   .main-header {
     padding-top: 15px;
@@ -735,10 +839,10 @@ img.hero-logo {
 /* Mobile */
 @media (max-width: 768px) {
   .main-header h1 {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
-  .main-header h1-subtitle {
-    font-size: 1rem;
+  .main-header .h1-subtitle {
+    font-size: 1.1rem;
   }
   .main-header {
     padding-top: 0px;
@@ -781,7 +885,7 @@ img.hero-logo {
     background: white;
     width: 100%;
     max-width: 1000px;
-    margin: 10px auto 30px auto; /* Adds spacing between cards */
+    margin: 20px auto 30px auto; /* Adds spacing between cards */
     padding: 30px;
     border-radius: var(--card-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -945,7 +1049,7 @@ img.hero-logo {
     background: white;
     width: 100%;             /* Added: Ensures it fills space on small screens */
     max-width: 800px;
-    margin: 0 auto;
+    margin: 40px auto;
     padding: 30px;
     border-radius: var(--card-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -1049,13 +1153,13 @@ img.hero-logo {
   }
 
   .start-btn:hover:not(:disabled) {
-    background: var(--primary-hover);
+    opacity: 0.9;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(11, 83, 148, 0.3);
   }
 
   .start-btn:disabled {
-    background: #a0aec0;
+    opacity: 0.3;
     cursor: not-allowed;
     opacity: 0.7;
     box-shadow: none;
@@ -1267,14 +1371,16 @@ img.hero-logo {
 
 /*** --- 6. Footer --- ***/
 footer {
-    margin-top: 20px;
-    margin-bottom: 5px;
-    padding: 10px 10px;
+    margin: 0; 
+    width: 100%;
+    padding: 30px 10px;
     text-align: center;
     background-color: var(--color-primary);
     color: #ffffff;
     border-top: none;
     font-family: Arial, sans-serif;
+    position: relative; 
+    z-index: 10;
   }
 
   .footer-links {

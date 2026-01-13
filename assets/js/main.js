@@ -17,9 +17,36 @@ const GVMApp = (function() {
             appContainer: "#app-container",
             iframe: "#gvm-frame",
             loader: "#loader",
-            intro: ".card-intro", // Card containing the start button
+            intro: ".card-intro", 
             wrapper: ".main-wrapper",
-            faqDetails: ".faq-item details"
+            faqDetails: ".faq-item details",
+            // Navigation Selectors
+            navToggle: ".navbar-toggle",
+            navMenu: ".nav-menu",
+            navLinks: ".nav-links, .dropdown-menu a"
+        }
+    };
+
+    // --- 2. Mobile Menu Logic (Moved Here) ---
+    const initMobileMenu = () => {
+        const toggleBtn = document.querySelector(config.selectors.navToggle);
+        const navMenu = document.querySelector(config.selectors.navMenu);
+
+        if (toggleBtn && navMenu) {
+            // Toggle Click
+            toggleBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                toggleBtn.classList.toggle('active');
+            });
+
+            // Close menu when a link is clicked
+            const links = document.querySelectorAll(config.selectors.navLinks);
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    toggleBtn.classList.remove('active');
+                });
+            });
         }
     };
 
@@ -41,17 +68,12 @@ const GVMApp = (function() {
         }
     };
 
-
-    // --- FAQ Plus Box
-    document.addEventListener('DOMContentLoaded', function() {
+    // --- FAQ Logic ---
+    const initFAQ = () => {
         const acc = document.getElementsByClassName("faq-question");
-
         for (let i = 0; i < acc.length; i++) {
             acc[i].addEventListener("click", function() {
-                // Toggle the "active" class on the button
                 this.classList.toggle("active");
-
-                // Toggle the panel visibility
                 const panel = this.nextElementSibling;
                 if (panel.classList.contains("open")) {
                     panel.classList.remove("open");
@@ -60,7 +82,7 @@ const GVMApp = (function() {
                 }
             });
         }
-    });
+    };
 
     const launchCalculator = () => {
         const btn = document.querySelector(config.selectors.startBtn);
@@ -73,12 +95,10 @@ const GVMApp = (function() {
 
         trackEvent('start_calculator', 'Launch');
 
-        // Swap UI visibility
         if (intro) intro.style.display = "none";
         container.style.display = "block";
         if (wrapper) wrapper.classList.add('app-active');
 
-        // Set iframe source to trigger loading
         iframe.src = config.appUrl;
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -89,26 +109,20 @@ const GVMApp = (function() {
     // --- 4. Event Binding ---
 
     const bindEvents = () => {
-        // We use Event Delegation for elements that might be injected (like nav)
-        // and direct binding for page-specific elements.
-
         const checkbox = document.querySelector(config.selectors.checkbox);
         const startBtn = document.querySelector(config.selectors.startBtn);
         const iframe = document.querySelector(config.selectors.iframe);
 
-        // Disclaimer Checkbox
         if (checkbox && startBtn) {
             checkbox.addEventListener('change', (e) => {
                 startBtn.disabled = !e.target.checked;
             });
         }
 
-        // Start Button
         if (startBtn) {
             startBtn.addEventListener('click', launchCalculator);
         }
 
-        // Iframe Loading Spinner
         if (iframe) {
             iframe.addEventListener('load', () => {
                 const loader = document.querySelector(config.selectors.loader);
@@ -121,7 +135,7 @@ const GVMApp = (function() {
             });
         }
 
-        // FAQ Toggle Tracking
+        // Native Details/Summary FAQ Tracking
         document.addEventListener('toggle', (e) => {
             if (e.target.tagName === 'DETAILS' && e.target.open) {
                 const summary = e.target.querySelector('summary');
@@ -132,10 +146,8 @@ const GVMApp = (function() {
 
     /**
      * Injects header and footer into the page.
-     * Uses absolute paths to ensure they load from any subfolder.
      */
     const loadSharedComponents = async () => {
-        // FIXED: Added full paths to the assets folder
         const components = [
             { id: config.selectors.headerPlaceholder, file: '/assets/components/header.html' },
             { id: config.selectors.footerPlaceholder, file: '/assets/components/footer.html' }
@@ -145,19 +157,19 @@ const GVMApp = (function() {
             const el = document.querySelector(item.id);
             if (el) {
                 try {
-                    // Removed complex relative path logic in favor of absolute paths
                     const response = await fetch(item.file);
-                    
                     if (!response.ok) throw new Error(`Could not find ${item.file}`);
+                    
                     const html = await response.text();
                     el.innerHTML = html;
 
-                    // 1. If we just loaded the header, highlight the active link
+                    // --- COMPONENT LOADED HOOKS ---
+                    
                     if (item.id === config.selectors.headerPlaceholder) {
                         highlightActiveLink();
+                        initMobileMenu(); // <--- FIXED: Init Menu AFTER injection
                     }
 
-                    // 2. If we just loaded the footer, start the year script
                     if (item.id === config.selectors.footerPlaceholder) {
                         initDynamicYear();
                     }
@@ -173,17 +185,15 @@ const GVMApp = (function() {
      * Checks the URL and highlights the correct menu item
      */
     const highlightActiveLink = () => {
-        const currentPath = window.location.pathname.replace(/\/$/, ""); // Normalize: remove trailing slash
+        const currentPath = window.location.pathname.replace(/\/$/, ""); 
         const navLinks = document.querySelectorAll('.nav-links');
 
         navLinks.forEach(link => {
             const linkHref = link.getAttribute('href').replace(/\/$/, ""); 
 
-            // Logic 1: Exact Match (e.g., Home, Calculator, About)
             if (currentPath === linkHref || (currentPath === "" && linkHref === "")) {
                 link.classList.add('active');
             } 
-            // Logic 2: "Learn" Section Handling
             else if (currentPath.includes("/learn") && linkHref.includes("/learn")) {
                 link.classList.add('active');
             }
@@ -193,11 +203,9 @@ const GVMApp = (function() {
     // --- 5. Public Init ---
     return {
         init: function() {
-            // 1. Injected Shared HTML
             loadSharedComponents();
-            
-            // 2. Setup Page Logic
             bindEvents();
+            initFAQ(); // Initialize the custom FAQ script if it exists
         }
     };
 
@@ -205,5 +213,3 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
-
-
