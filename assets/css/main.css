@@ -454,6 +454,7 @@ img.hero-logo {
 }
 
 .hero-right {
+  text-align: left;
   color: var(--color-white);
   border-left: 0px solid var(--color-accent); 
   padding-left: 30px;
@@ -461,8 +462,9 @@ img.hero-logo {
 }
 
 .hero-quote {
+  text-align: left;
   font-size: 1.25rem;
-  line-height: 1.26;
+  line-height: 1.25;
   font-style: italic;
   font-weight: 500;
   margin-bottom: 20px;
@@ -470,7 +472,8 @@ img.hero-logo {
 }
 
 .hero-quote-author {
-  font-size: 1rem;
+  text-align: left;
+  font-size: 1.5rem;
   opacity: 1;
   font-weight: 600;
   text-transform: uppercase;
@@ -478,15 +481,17 @@ img.hero-logo {
 }
 
 .hero-quote-list {
-  list-style-type: disc; /* standard dot bullets */
-  padding-left: 1.5rem;  /* space for bullets */
-  margin: 0 0 0px 0;    /* spacing similar to hero-quote */
-  font-size: 1.55rem;    /* same size as quote text */
-  line-height: 1.4;      /* match quote spacing */
+  text-align: left;
+  display: inline-block; /* Keeps the list tight so bullets stay near text */
+  max-width: 100%;       /* Prevents it from overflowing */
+  margin: 0 auto;        /* Optional: Keeps the block centered, but text left */
+  padding-left: 1.5rem;  /* Ensure room for bullet points */
 }
 
 .hero-quote-list li {
-  margin-bottom: 0.5rem; /* space between list items */
+  font-size: 1.2rem;       /* Adjust this number for Mobile size */
+  line-height: 1.15;
+  margin-bottom: 0.5rem; /* Space between bullet points */
 }
 
 /* --- UPDATED MOBILE RESPONSIVENESS --- */
