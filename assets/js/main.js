@@ -171,45 +171,45 @@ const GVMApp = (function() {
 
 
     const launchCalculator = () => {
-
+        // 1. Select Elements
         const btn = document.querySelector(config.selectors.startBtn);
-
         const container = document.querySelector(config.selectors.appContainer);
-
         const iframe = document.querySelector(config.selectors.iframe);
-
-        const intro = document.querySelector(config.selectors.intro);
-
+        const intro = document.querySelector(config.selectors.intro) || document.querySelector('.card') || document.querySelector('.seo-content');
         const wrapper = document.querySelector(config.selectors.wrapper);
-
-
+        
+        // --- THIS IS THE FIX ---
+        // We select the header explicitly to hide it
+        const header = document.querySelector('.main-header'); 
+        const seoFooter = document.querySelector('.seo-footer');
 
         if (!btn || !container) return;
 
-
-
         trackEvent('start_calculator', 'Launch');
 
-
-
+        // 2. Hide Static Content
         if (intro) intro.style.display = "none";
+        if (seoFooter) seoFooter.style.display = 'none';
 
+        // 3. Show App Container
         container.style.display = "block";
 
+        // 4. Add 'app-active' to Wrapper (Triggers CSS for the card)
         if (wrapper) wrapper.classList.add('app-active');
 
+        // 5. Add 'app-active' to Header (Triggers CSS to hide the H1 Title)
+        if (header) {
+            header.classList.add('app-active');
+            header.style.display = 'none'; // Force hide via inline style as backup
+        }
 
-
+        // 6. Load App
         iframe.src = config.appUrl;
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-
-
+        // 7. Button Feedback
         btn.textContent = "Loading Calculator...";
-
         btn.disabled = true;
-
     };
 
 

@@ -715,7 +715,7 @@ img.hero-logo {
 
   /* CHANGED: When active, lock the wrapper to the screen size */
   .main-wrapper.app-active {
-    height: calc(100dvh - 50px);
+    height: calc(100dvh - 65px);
     overflow: hidden;
     padding-bottom: 0;
   }
@@ -1418,7 +1418,6 @@ footer {
 
 /* --- 7. Responsive --- */
 @media (max-width: 768px) {
-  .nav-menu { display: none; } /* Add a hamburger menu later if needed */
   .page-header h1 { font-size: 2rem; }
   .card { padding: 1.5rem; }
 }
@@ -1428,8 +1427,72 @@ footer {
 
 
 
+/* ============================================================
+   APP ACTIVE STATE - FLOATING CARD FIX
+   ============================================================ */
 
+/* 1. Hide the Header & Breadcrumbs */
+header.main-header.app-active {
+    display: none !important;
+}
 
+/* 2. Hide Content inside the wrapper */
+.main-wrapper.app-active .container,
+.main-wrapper.app-active .seo-footer,
+.main-wrapper.app-active .disclaimer-box,
+.main-wrapper.app-active .card {
+    display: none !important;
+}
 
+/* 3. Force Main Wrapper to release space */
+.main-wrapper.app-active {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+/* 4. THE CARD: Floating with 10px gap */
+.main-wrapper.app-active #app-container {
+    display: block !important;
+    position: fixed !important;
+    
+    /* MATH: Navbar (65px) + Top Gap (10px) = 75px */
+    top: 75px !important; 
+    
+    /* Left Gap */
+    left: 10px !important;
+    
+    /* Width: 100vw - Left Gap (10px) - Right Gap (10px) */
+    width: calc(100vw - 20px) !important; 
+    
+    /* Height: 100vh - Top Start (75px) - Bottom Gap (10px) */
+    height: calc(100vh - 85px) !important;
+    
+    z-index: 50;
+    background-color: var(--color-primary) !important; /* #0b5394 */
+    
+    /* Card Aesthetics */
+    border-radius: 12px !important; /* Rounded corners */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important; /* Nice drop shadow */
+    overflow: hidden !important; /* Clips the iframe to the rounded corners */
+}
+
+/* 5. THE IFRAME: Hide Streamlit Toolbar */
+.main-wrapper.app-active #app-container iframe {
+    position: absolute;
+    background: white; /* Ensure iframe background is white */
+    
+    /* Pull iframe UP to hide Streamlit header */
+    top: -40px !important; 
+    left: 0;
+    width: 100%;
+    
+    /* Add 40px to height to compensate for the shift */
+    height: calc(100% + 80px) !important; 
+    
+    border: none;
+}
 
 

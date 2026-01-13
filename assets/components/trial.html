@@ -154,7 +154,7 @@
 
     <div id="header-placeholder"></div>
 
-    <div class="main-header">
+    <header class="main-header">
         
         <nav aria-label="breadcrumb" class="breadcrumb">
             <ol>
@@ -163,99 +163,104 @@
             </ol>
         </nav>
         <h1>
-            Project GVM Weight Calculator
-            <span class="h1-subtitle">Plan your build: check your axle loads and towing capacity of your 4WD</span>
+            4WD GVM Calculator
+            <span class="h1-subtitle">Estimate your vehicle’s GVM and axle loads</span>
         </h1>
-    </div>
+      </header>
     
 
 
-<div class="gvm-wrapper">
-  
-  <div class="seo-content">
-    <h2>About the Calculator</h2>
-    <p>
-  This <strong>free</strong> 4WD GVM calculator helps Australian drivers accurately estimate <strong>remaining payload, axle loads, and vehicle weight</strong> using real-world vehicle geometry and brand-specific accessories.
-</p>
+    <main class="main-wrapper">
+    
+        <div class="container">
+            
+            <section class="card">
 
-<p>
-  Unlike generic calculators, this tool accounts for <strong>vehicle-specific mounting positions</strong>   and <strong>real accessory weights</strong>, so you’re not guessing or relying on rough averages.
-</p>
+              <h2>About the Calculator</h2>
+              
+              <p>
+                This <strong>free</strong> 4WD GVM calculator helps Australian drivers accurately estimate <strong>remaining payload, axle loads, and vehicle weight</strong> using real-world vehicle geometry and brand-specific accessories.
+              </p>
+              <p>
+                Unlike generic calculators, this tool accounts for <strong>vehicle-specific mounting positions</strong>   and <strong>real accessory weights</strong>, so you’re not guessing or relying on rough averages.
+              </p>
 
-<p>
-  It’s ideal for popular platforms such as the
-  <strong>Toyota LandCruiser 200 Series</strong>,
-  <strong>79 Series</strong>,
-  <strong>Y62 Patrol</strong>,
-  <strong>Prado</strong>, and other touring 4WDs.
-</p>
+              <p>
+                It’s ideal for popular platforms such as the
+                <strong>Toyota LandCruiser 200 Series</strong>,
+                <strong>79 Series</strong>,
+                <strong>Y62 Patrol</strong>,
+                <strong>Prado</strong>, and other touring 4WDs.
+              </p>
 
-<h3>How this calculator is different</h3>
+              <h3>How this calculator is different</h3>
 
-<p>
-  Most online GVM calculators use generic weight assumptions.
-  This calculator goes further by modelling <strong>real-world vehicle geometry</strong>
-  and <strong>brand-specific accessories</strong>.
-</p>
+              <p>
+                Most online GVM calculators use generic weight assumptions.
+                This calculator goes further by modelling <strong>real-world vehicle geometry</strong>
+                and <strong>brand-specific accessories</strong>.
+              </p>
 
-<ul>
-  <li>
-    <strong>Vehicle-Specific Load Positions:</strong>
-    Each vehicle model uses realistic axle distances and mounting points,
-    so weight placement reflects how your vehicle actually behaves.
-  </li>
+              <ul>
+                <li>
+                  <strong>Vehicle-Specific Load Positions:</strong>
+                  Each vehicle model uses realistic axle distances and mounting points,
+                  so weight placement reflects how your vehicle actually behaves.
+                </li>
 
-  <li>
-    <strong>Brand & Model Accessories:</strong>
-    Accessories are based on real products - meaning you don’t need to guess weights
-    or search manufacturer specs.
-  </li>
+                <li>
+                  <strong>Brand & Model Accessories:</strong>
+                  Accessories are based on real products - meaning you don’t need to guess weights
+                  or search manufacturer specs.
+                </li>
 
-  <li>
-    <strong>Realistic Load Transfer:</strong>
-    See how accessories affect both total GVM and front/rear axle loads.
-  </li>
-</ul>
+                <li>
+                  <strong>Realistic Load Transfer:</strong>
+                  See how accessories affect both total GVM and front/rear axle loads.
+                </li>
+              </ul>
 
-    <div class="disclaimer-box">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        Quick Note Before You Start
-      </h3>
-      <p>
-        This calculator provides realistic estimates based on real-world data. For legal compliance or certification, always confirm results using a certified weighbridge or engineer.
-      </p>
-    </div>
+              <div class="disclaimer-box">
+                <h3>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  Quick Note Before You Start
+                </h3>
+                <p>
+                  This calculator provides realistic estimates based on real-world data. For legal compliance or certification, always confirm results using a certified weighbridge or engineer.
+                </p>
+              </div>
 
-    <div class="start-box">
+              <div class="start-box">
 
-<p style="font-size: 0.9rem; color: #555; margin-bottom: 12px; text-align: left;">
-  Step 1 of 3: Getting Started
-</p>
+                <p style="font-size: 0.9rem; color: #555; margin-bottom: 12px; text-align: left;">
+                  Step 1 of 3: Getting Started
+                </p>
 
-      <label class="checkbox-label">
-        <input type="checkbox" id="acknowledge" aria-label="Acknowledge estimation disclaimer" />
-        I understand this is an estimate, not a certified measurement
-      </label>
-      <br>
-      <button class="start-btn" id="startBtn" disabled>
-        Calculate My Vehicle Weight
-      </button>
-    </div>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="acknowledge" aria-label="Acknowledge estimation disclaimer" />
+                  I understand this is an estimate, not a certified measurement
+                </label>
+                <br>
+                <button class="start-btn" id="startBtn" disabled>
+                  Calculate My Vehicle Weight
+                </button>
+              </div>
 
-<p style="font-size: 0.85rem; color: #666; margin-top: 20px; margin-bottom: 0px; text-align: center;">
-  No signup • No personal data stored • Quick • Simple
-</p>
+            <p style="font-size: 0.85rem; color: #666; margin-top: 20px; margin-bottom: 0px; text-align: center;">
+              No signup • No personal data stored • Quick • Simple
+            </p>
 
-  </div>
+          </section>
 
-  <div id="app-container">
-    <div class="loader-overlay" id="loader">
-        <div class="spinner"></div>
-        <div class="loading-text">Loading capable 4WDs and fun modifications...</div>
-    </div>
-    <iframe id="gvm-frame" title="GVM Calculator App"></iframe>
-  </div>
+      </div>
+
+      <div id="app-container">
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading capable 4WDs and fun modifications...</div>
+        </div>
+        <iframe id="gvm-frame" title="GVM Calculator App"></iframe>
+      </div>
 
 
  <div class="seo-footer">
@@ -504,5 +509,3 @@ document.querySelectorAll('.faq-item details').forEach(faq => {
     <script src="/assets/js/main.js"></script>
 </body>
 </html>
-
-
