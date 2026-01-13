@@ -27,27 +27,48 @@ const GVMApp = (function() {
         }
     };
 
-    // --- 2. Mobile Menu Logic (Moved Here) ---
+    // --- 2. Mobile Menu Logic (UPDATED: Event Delegation) ---
     const initMobileMenu = () => {
-        const toggleBtn = document.querySelector(config.selectors.navToggle);
-        const navMenu = document.querySelector(config.selectors.navMenu);
+        // We attach the listener to the 'document' instead of the button directly.
+        // This catches the click regardless of when the header was loaded.
+        document.addEventListener('click', (e) => {
+            
+            // A. Check if the clicked element (or its parent) is the Toggle Button
+            const toggleBtn = e.target.closest(config.selectors.navToggle);
+            
+            if (toggleBtn) {
+                e.preventDefault();
+                const navMenu = document.querySelector(config.selectors.navMenu);
+                if (navMenu) {
+                    navMenu.classList.toggle('active');
+                    toggleBtn.classList.toggle('active'); // Animates the hamburger
+                }
+                return; // Stop processing to avoid conflicts
+            }
 
-        if (toggleBtn && navMenu) {
-            // Toggle Click
-            toggleBtn.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-                toggleBtn.classList.toggle('active');
-            });
+            // B. Close menu if clicking a LINK inside the menu
+            if (e.target.matches(config.selectors.navLinks)) {
+                 const navMenu = document.querySelector(config.selectors.navMenu);
+                 const activeBtn = document.querySelector(config.selectors.navToggle);
+                 
+                 if (navMenu && navMenu.classList.contains('active')) {
+                     navMenu.classList.remove('active');
+                     if (activeBtn) activeBtn.classList.remove('active');
+                 }
+                 return;
+            }
 
-            // Close menu when a link is clicked
-            const links = document.querySelectorAll(config.selectors.navLinks);
-            links.forEach(link => {
-                link.addEventListener('click', () => {
+            // C. Close menu if clicking OUTSIDE the menu (Optional UX Polish)
+            const navMenu = document.querySelector(config.selectors.navMenu);
+            if (navMenu && navMenu.classList.contains('active')) {
+                // If click is NOT on the menu and NOT on the toggle button
+                if (!e.target.closest(config.selectors.navMenu)) {
                     navMenu.classList.remove('active');
-                    toggleBtn.classList.remove('active');
-                });
-            });
-        }
+                    const activeBtn = document.querySelector(config.selectors.navToggle);
+                    if (activeBtn) activeBtn.classList.remove('active');
+                }
+            }
+        });
     };
 
     // --- 3. UI Methods ---
@@ -167,7 +188,8 @@ const GVMApp = (function() {
                     
                     if (item.id === config.selectors.headerPlaceholder) {
                         highlightActiveLink();
-                        initMobileMenu(); // <--- FIXED: Init Menu AFTER injection
+                        // Note: initMobileMenu is now robust enough to be called once at Init, 
+                        // but calling it here does no harm either.
                     }
 
                     if (item.id === config.selectors.footerPlaceholder) {
@@ -203,9 +225,13 @@ const GVMApp = (function() {
     // --- 5. Public Init ---
     return {
         init: function() {
+            // We call initMobileMenu immediately. Because it uses Delegation,
+            // it doesn't matter that the header hasn't loaded yet!
+            initMobileMenu(); 
+            
             loadSharedComponents();
             bindEvents();
-            initFAQ(); // Initialize the custom FAQ script if it exists
+            initFAQ();
         }
     };
 
