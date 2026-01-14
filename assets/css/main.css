@@ -1557,32 +1557,33 @@ header.main-header.app-active {
     display: block !important;
     position: fixed !important;
     
-    /* MATH: Navbar (65px) + Top Gap (10px) = 75px */
+    /* Top Anchor */
     top: 75px !important; 
     
-    /* Left Gap */
+    /* Left/Right Anchor */
     left: 10px !important;
-    
-    /* Width: 100vw - Left Gap (10px) - Right Gap (10px) */
     width: calc(100vw - 20px) !important; 
     
-    /* Height: 100vh - Top Start (75px) - Bottom Gap (10px) */
-    height: calc(100vh - 85px) !important;
+    /* --- THE FIX FOR IPHONE --- */
+    /* 1. Remove the calculated height. Let 'top' and 'bottom' define the size. */
+    height: auto !important;
+
+    /* 2. Pin the bottom. 
+       We use a calc() to add your 10px desired gap PLUS the iPhone Safe Area.
+       If the browser bar is up, 'bottom: 0' refers to the top of that bar, 
+       so this naturally avoids the back/forward buttons. 
+    */
+    bottom: 10px !important; /* Fallback */
+    bottom: calc(10px + env(safe-area-inset-bottom)) !important; /* iOS Safe Area aware */
+    /* -------------------------- */
     
     z-index: 50;
-    background-color: var(--color-primary) !important; /* #0b5394 */
+    background-color: var(--color-primary) !important; 
     
     /* Card Aesthetics */
-    border-radius: 12px !important; /* Rounded corners */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important; /* Nice drop shadow */
-    overflow: hidden !important; /* Clips the iframe to the rounded corners */
-}
-
-/* 5. Hide the Footer when App is Active */
-.main-wrapper.app-active ~ footer,
-.main-wrapper.app-active ~ #footer-placeholder, 
-.gvm-wrapper.app-active ~ footer {
-    display: none !important;
+    border-radius: 10px !important; 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important; 
+    overflow: hidden !important; 
 }
 
 /* 5. THE IFRAME: Hide Streamlit Toolbar */
