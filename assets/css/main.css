@@ -18,6 +18,7 @@
   --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
   --container-max: 900px;
   --transition: all 0.2s ease-in-out;
+  --header--height: 65px;
 
   /* Card Properties */
   --card-radius: 8px;
@@ -32,7 +33,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
-  padding-top: 65px; /* same as nav height */
+  padding-top: 0px; /* same as nav height */
   margin: 0;
   font-family: Arial, sans-serif;
   font-size: 16px;
@@ -101,10 +102,16 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 
 /* --- Navigation Bar Styles --- */
+#header-placeholder {
+  width: 100%;
+  min-height: var(--header--height); /* Reserves space for the fixed header */
+  display: block;
+}
+
 .site-nav {
   background-color: var(--color-primary);
   color: var(--color-white);
-  height: 65px;
+  height: var(--header--height);
   display: flex;
   align-items: center;
   padding: 10px 24px;
@@ -1603,4 +1610,5 @@ header.main-header.app-active {
     border: none;
 
 }
+
 
