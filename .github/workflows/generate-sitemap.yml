@@ -33,80 +33,94 @@ jobs:
 
       - name: Auto SEO (Titles, Meta, Schema, OG)
         run: |
-          set +e
+          # Create a consistent base environment
           BASE_URL="https://www.projectgvm.com.au"
           STATIC_IMG="https://www.projectgvm.com.au/assets/img/brand/og-image.jpg"
           
+          # Find html files, exclude hidden ones
           find . -type f -name "*.html" -not -path '*/.*' | while read file; do
             echo "Processing: $file"
       
             # -------------------------------
             # 1. EXTRACT RAW DATA
             # -------------------------------
-            TITLE=$(sed -n 's|.*<title>\(.*\)</title>.*|\1|p' "$file")
-            DESC=$(grep -m 1 -oP '(?<=<meta name="description" content=")[^"]*' "$file" || true)
+            # Use a safer regex to capture title content
+            TITLE=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" || echo "Project GVM")
+            # Extract description content
+            DESC=$(grep -oP '(?<=<meta name="description" content=")[^"]*' "$file" || echo "")
+            # Extract type
+            TYPE=$(grep -oP '(?<=<meta property="og:type" content=")[^"]*' "$file" || echo "")
       
             # -------------------------------
             # 2. SANITIZE
             # -------------------------------
             SAFE_TITLE=$(echo "$TITLE" | sed 's/"/\&quot;/g')
             SAFE_DESC=$(echo "$DESC" | sed 's/"/\&quot;/g')
+            SAFE_TYPE=$(echo "$TYPE" | sed 's/"/\&quot;/g')
       
             # -------------------------------
             # 3. DELETE OLD TAGS
             # -------------------------------
+            # We delete lines containing specific property definitions to avoid duplicates
             sed -i "/<link rel=\"canonical\"/d" "$file"
-            
-            sed -i "/<meta property=\"og:url/d" "$file"
-            sed -i "/<meta property=\"og:title/d" "$file"
-            sed -i "/<meta property=\"og:description/d" "$file"
-            sed -i "/<meta property=\"og:image/d" "$file"
-            
+            sed -i "/<meta property=\"og:/d" "$file"
             sed -i "/<meta name=\"twitter:/d" "$file"
       
             # -------------------------------
-            # 4. ADD NEW TAGS IN ORDER
-            # -------------------------------    
-            # Canonical URL
+            # 4. PREPARE NEW TAGS (Temp File)
+            # -------------------------------
+            # Calculate dynamic URL
             DIR=$(dirname "$file")
             DIR=${DIR#./}
             [ "$DIR" = "." ] && DIR=""
-            URL="$BASE_URL${DIR:+/$DIR}/"
+            # Handle root vs subdir trailing slashes
+            if [ -z "$DIR" ]; then
+              URL="$BASE_URL/"
+            else
+              URL="$BASE_URL/$DIR/"
+            fi
             
-            sed -i "/<meta property=\"og:type\"/a $(cat <<EOF
-              <meta property="og:type" content="website">
-              <meta property="og:title" content="$SAFE_TITLE">
-              <meta property="og:description" content="$SAFE_DESC">
-              <meta property="og:url" content="$URL">
-              <meta property="og:image" content="$STATIC_IMG">
-              
-              <meta name="twitter:card" content="summary_large_image">
-              <meta name="twitter:title" content="$SAFE_TITLE">
-              <meta name="twitter:description" content="$SAFE_DESC">
-              <meta name="twitter:url" content="$URL">
-              <meta name="twitter:image" content="$STATIC_IMG">
-              
-              <link rel="canonical" href="$URL">
-              EOF
-              )" "$file"
-              
+            # Write the block to a temporary file named 'seo_block.txt'
+            # Note: We indent specifically for visual clean-up in source
+            cat > seo_block.txt <<EOF
+            <meta property="og:type" content="$SAFE_TYPE">
+            <meta property="og:title" content="$SAFE_TITLE">
+            <meta property="og:description" content="$SAFE_DESC">
+            <meta property="og:url" content="$URL">
+            <meta property="og:image" content="$STATIC_IMG">
+            <meta name="twitter:card" content="summary_large_image">
+            <meta name="twitter:title" content="$SAFE_TITLE">
+            <meta name="twitter:description" content="$SAFE_DESC">
+            <meta name="twitter:url" content="$URL">
+            <meta name="twitter:image" content="$STATIC_IMG">
+            <link rel="canonical" href="$URL">
+          EOF
+            
+            # -------------------------------
+            # 5. INJECT TAGS
+            # -------------------------------
+            # We use sed 'r' command to read the file and append it AFTER the <head> tag.
+            # This is safer than replacing 'og:type' which might be missing.
+            sed -i '/<head>/r seo_block.txt' "$file"
+            
+            # Clean up temp file
+            rm seo_block.txt
+            
           done
-          
 
       # -------------------------------------------------
       # COMMIT & PUSH 
-      # Uses [skip ci] to prevent infinite loops
       # -------------------------------------------------
       - name: Commit SEO changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Check if anything actually changed before committing
           if [[ -n $(git status -s) ]]; then
             git add .
             git commit -m "Auto SEO update [skip ci]"
-            git push origin main
+            # Explicitly push to HEAD:main to handle potential detached head states
+            git push origin HEAD:main
           else
             echo "No SEO changes detected. Skipping push."
           fi
