@@ -65,6 +65,7 @@ jobs:
             sed -i "/<link rel=\"canonical\"/d" "$file"
             sed -i "/<meta property=\"og:/d" "$file"
             sed -i "/<meta name=\"twitter:/d" "$file"
+            sed -i "/<meta name=\"description/d" "$file"
       
             # -------------------------------
             # 4. PREPARE NEW TAGS (Temp File)
@@ -83,16 +84,20 @@ jobs:
             # Write the block to a temporary file named 'seo_block.txt'
             # Note: We indent specifically for visual clean-up in source
             cat > seo_block.txt <<EOF
+            <meta name="description" content="$SAFE_DESC">
+            
             <meta property="og:type" content="$SAFE_TYPE">
             <meta property="og:title" content="$SAFE_TITLE">
             <meta property="og:description" content="$SAFE_DESC">
             <meta property="og:url" content="$URL">
             <meta property="og:image" content="$STATIC_IMG">
+            
             <meta name="twitter:card" content="summary_large_image">
             <meta name="twitter:title" content="$SAFE_TITLE">
             <meta name="twitter:description" content="$SAFE_DESC">
             <meta name="twitter:url" content="$URL">
             <meta name="twitter:image" content="$STATIC_IMG">
+            
             <link rel="canonical" href="$URL">
           EOF
             
@@ -101,7 +106,7 @@ jobs:
             # -------------------------------
             # We use sed 'r' command to read the file and append it AFTER the <head> tag.
             # This is safer than replacing 'og:type' which might be missing.
-            sed -i '/<head>/r seo_block.txt' "$file"
+            sed -i '/<title>/r seo_block.txt' "$file"
             
             # Clean up temp file
             rm seo_block.txt
