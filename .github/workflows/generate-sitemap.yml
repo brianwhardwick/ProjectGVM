@@ -73,24 +73,23 @@ jobs:
             [ "$DIR" = "." ] && DIR=""
             URL="$BASE_URL${DIR:+/$DIR}/"
             
-            sed -i "/<meta property=\"og:type"/a \
-              \\
-              <meta property=\"og:type\" content=\"website\">\\
-              <meta property=\"og:title\" content=\"$SAFE_TITLE\">\\
-              <meta property=\"og:description\" content=\"$SAFE_DESC\">\\
-              <meta property=\"og:url\" content=\"$URL\">\\
-              <meta property=\"og:image\" content=\"$STATIC_IMG\">\\
-              \\
-              \\
-              <meta name=\"twitter:card\" content=\"summary_large_image\">\\
-              <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">\\
-              <meta name=\"twitter:description\" content=\"$SAFE_DESC\">\\
-              <meta name=\"twitter:url\" content=\"$URL\">\\
-              <meta name=\"twitter:image\" content=\"$STATIC_IMG\">" "$file"
-              \\
-              \\
-              <link rel=\"canonical\" href=\"$URL\">\\
-              \\
+            sed -i "/<meta property=\"og:type\"/a $(cat <<EOF
+              <meta property="og:type" content="website">
+              <meta property="og:title" content="$SAFE_TITLE">
+              <meta property="og:description" content="$SAFE_DESC">
+              <meta property="og:url" content="$URL">
+              <meta property="og:image" content="$STATIC_IMG">
+              
+              <meta name="twitter:card" content="summary_large_image">
+              <meta name="twitter:title" content="$SAFE_TITLE">
+              <meta name="twitter:description" content="$SAFE_DESC">
+              <meta name="twitter:url" content="$URL">
+              <meta name="twitter:image" content="$STATIC_IMG">
+              
+              <link rel="canonical" href="$URL">
+              EOF
+              )" "$file"
+              
           done
           
 
