@@ -99,7 +99,6 @@ jobs:
             <meta name="twitter:description" content="$SAFE_DESC">
             <meta name="twitter:url" content="$URL">
             <meta name="twitter:image" content="$STATIC_IMG">
-
           EOF
             
             # -------------------------------
