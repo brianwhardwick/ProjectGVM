@@ -42,10 +42,13 @@ jobs:
             **.html
 
       # ----------------------------------------------------------------
-      # FIXED SEO SCRIPT (Non-greedy regex + Preserves HTML structure)
+      # FIXED SEO SCRIPT (Prevents crashes on missing tags)
       # ----------------------------------------------------------------
       - name: Auto-SEO (All Meta Tags + Schema)
         run: |
+          # Ensure the script doesn't exit on a simple grep miss
+          set +e 
+
           NEW_DATE=$(date +'%Y-%m-%d')
           BASE_URL="https://www.projectgvm.com.au"
 
@@ -53,29 +56,28 @@ jobs:
             echo "Processing SEO for: $file"
 
             # -------------------------------------------------------
-            # 1. EXTRACT DATA (Use < unescaped for grep to be safe)
+            # 1. EXTRACT DATA (With || true to prevent crashing)
             # -------------------------------------------------------
             
             # Extract Title
             PAGE_TITLE=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$file")
             
-            # Extract Description (Look for content="..." inside a meta name="description" tag)
-            # We use perl here because it handles non-greedy matching (?) much better than sed
-            PAGE_DESC=$(grep -oP '(?<=<meta name="description" content=")[^"]*' "$file" || grep -oP '(?<=<meta content=")[^"]*(?=" name="description")' "$file")
+            # Extract Description 
+            # We use perl grep (-P). Added "|| true" so script continues if no desc found.
+            PAGE_DESC=$(grep -oP '(?<=<meta name="description" content=")[^"]*' "$file" || grep -oP '(?<=<meta content=")[^"]*(?=" name="description")' "$file" || true)
 
-            # sanitize for sed replacement (escape pipes, quotes, and forward slashes)
-            SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
-            SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g')
-
+            # Sanitize for sed replacement (escape pipes, quotes, and ampersands)
+            SAFE_TITLE=$(echo "$PAGE_TITLE" | sed 's/|/\\|/g' | sed 's/"/\\"/g' | sed 's/&/\\&/g')
+            SAFE_DESC=$(echo "$PAGE_DESC" | sed 's/|/\\|/g' | sed 's/"/\\"/g' | sed 's/&/\\&/g')
 
             # -------------------------------------------------------
             # 2. UPDATE SCHEMA (JSON-LD)
             # -------------------------------------------------------
             
-            # Update dateModified (Standard regex)
+            # Update dateModified
             sed -i "s|\"dateModified\": \"[^\"]*\"|\"dateModified\": \"$NEW_DATE\"|g" "$file"
 
-            # Update Headline (Use [^\"]* to stop at the next quote, preventing deletion of rest of line)
+            # Update Headline
             if [ -n "$SAFE_TITLE" ]; then
                sed -i "s|\"headline\": \"[^\"]*\"|\"headline\": \"$SAFE_TITLE\"|g" "$file"
             fi
@@ -85,28 +87,23 @@ jobs:
                sed -i "s|\"description\": \"[^\"]*\"|\"description\": \"$SAFE_DESC\"|g" "$file"
             fi
 
-
             # -------------------------------------------------------
             # 3. UPDATE OPEN GRAPH & TWITTER TAGS
             # -------------------------------------------------------
             
-            # Function to safely update or append meta tags
+            # Helper function for updating meta tags
             update_meta() {
                 local property=$1
                 local content=$2
-                local attr_name=$3 # "property" or "name"
+                local attr_name=$3 
                 
-                # Check if the tag exists
                 if grep -q "$attr_name=\"$property\"" "$file"; then
-                    # CAREFUL REPLACEMENT:
-                    # Match: <meta (anything) property="og:title" (anything) content="(MATCH THIS)" (anything)>
-                    # We only want to replace the content value.
+                    # Replace content attribute
                     sed -i "s|$attr_name=\"$property\" content=\"[^\"]*\"|$attr_name=\"$property\" content=\"$content\"|g" "$file"
-                    
-                    # Also handle the case where content comes BEFORE property (e.g. <meta content="..." property="...">)
+                    # Handle reverse attribute order
                     sed -i "s|content=\"[^\"]*\" $attr_name=\"$property\"|content=\"$content\" $attr_name=\"$property\"|g" "$file"
                 else
-                    # Append after <title> if it doesn't exist
+                    # Insert if missing (after title)
                     sed -i "/<\/title>/a \    <meta $attr_name=\"$property\" content=\"$content\">" "$file"
                 fi
             }
@@ -121,7 +118,6 @@ jobs:
                 update_meta "twitter:description" "$SAFE_DESC" "name"
             fi
 
-            
             # -------------------------------------------------------
             # 4. UPDATE CANONICAL & URLS
             # -------------------------------------------------------
@@ -130,13 +126,9 @@ jobs:
               if [ "$DIR_PATH" == "." ]; then FINAL_PATH=""; else FINAL_PATH="$DIR_PATH/"; fi
               CORRECT_URL="$BASE_URL/$FINAL_PATH"
 
-              # Update Canonical
               sed -i "s|<link rel=\"canonical\" href=\"[^\"]*\"|<link rel=\"canonical\" href=\"$CORRECT_URL\"|g" "$file"
-              
-              # Update Schema ID
               sed -i "/\"@type\": \"Article\"/{n; s|\"@id\": \"[^\"]*\"|\"@id\": \"$CORRECT_URL\"|}" "$file"
               
-              # Update Meta URLs
               update_meta "og:url" "$CORRECT_URL" "property"
               update_meta "twitter:url" "$CORRECT_URL" "name"
             fi
