@@ -94,8 +94,18 @@ jobs:
             # -------------------------------
             if [[ "$file" == *"index.html" ]]; then
                DIR=$(dirname "$file")
+               
+               # FIX: Strip the leading "./" from the directory path
+               DIR=${DIR#./}
+
+               # If dirname returned "." (root), clear it to avoid "https://..././"
                [ "$DIR" = "." ] && DIR=""
-               if [ -z "$DIR" ]; then URL="$BASE_URL/"; else URL="$BASE_URL/$DIR/"; fi
+
+               if [ -z "$DIR" ]; then 
+                  URL="$BASE_URL/"
+               else 
+                  URL="$BASE_URL/$DIR/"
+               fi
                
                # Delete old canonical
                sed -i "/<link rel=\"canonical\"/d" "$file"
