@@ -72,17 +72,19 @@ jobs:
             DIR=${DIR#./}
             [ "$DIR" = "." ] && DIR=""
             URL="$BASE_URL${DIR:+/$DIR}/"
-            sed -i "/<\/title>/a \    <link rel=\"canonical\" href=\"$URL\">" "$file"
-      
-            # Open Graph tags
-            sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
-            sed -i "/<\/title>/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
-            sed -i "/<\/title>/a \    <meta property=\"og:url\" content=\"$URL\">" "$file"
-      
-            # Twitter tags
-            sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"
-            sed -i "/<\/title>/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
-            sed -i "/<\/title>/a \    <meta name=\"twitter:url\" content=\"$URL\">" "$file"
+            
+            sed -i "/<\/title>/a \
+              <meta name=\"description\" content=\"$SAFE_DESC\">\
+              \n\
+              <link rel=\"canonical\" href=\"$URL\">\
+              \n\
+              <meta property=\"og:title\" content=\"$SAFE_TITLE\">\
+              <meta property=\"og:description\" content=\"$SAFE_DESC\">\
+              <meta property=\"og:url\" content=\"$URL\">\
+              \n\
+              <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">\
+              <meta name=\"twitter:description\" content=\"$SAFE_DESC\">\
+              <meta name=\"twitter:url\" content=\"$URL\">" "$file"
       
           done
 
