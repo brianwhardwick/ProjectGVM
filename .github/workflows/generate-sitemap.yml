@@ -104,7 +104,7 @@ jobs:
             # -------------------------------
             # 5. INJECT TAGS
             # -------------------------------
-            # We use sed 'r' command to read the file and append it AFTER the <head> tag.
+            # We use sed 'r' command to read the file and append it AFTER the <title> tag.
             # This is safer than replacing 'og:type' which might be missing.
             sed -i '/<title>/r seo_block.txt' "$file"
             
