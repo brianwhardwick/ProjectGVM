@@ -35,6 +35,7 @@ jobs:
         run: |
           set +e
           BASE_URL="https://www.projectgvm.com.au"
+          STATIC_IMG="https://www.projectgvm.com.au/assets/img/brand/og-image.jpg"
           
           find . -type f -name "*.html" -not -path '*/.*' | while read file; do
             echo "Processing: $file"
@@ -54,45 +55,42 @@ jobs:
             # -------------------------------
             # 3. DELETE OLD TAGS
             # -------------------------------
-            sed -i "/<meta name=\"description\"/d" "$file"
             sed -i "/<link rel=\"canonical\"/d" "$file"
-            sed -i "/<meta property=\"og:/d" "$file"
+            
+            sed -i "/<meta property=\"og:url/d" "$file"
+            sed -i "/<meta property=\"og:title/d" "$file"
+            sed -i "/<meta property=\"og:description/d" "$file"
+            sed -i "/<meta property=\"og:image/d" "$file"
+            
             sed -i "/<meta name=\"twitter:/d" "$file"
       
             # -------------------------------
             # 4. ADD NEW TAGS IN ORDER
-            # -------------------------------
-            # Description immediately after <title>
-            if [ -n "$SAFE_DESC" ]; then
-              sed -i "/<\/title>/a \    <meta name=\"description\" content=\"$SAFE_DESC\">" "$file"
-            fi
-      
+            # -------------------------------    
             # Canonical URL
             DIR=$(dirname "$file")
             DIR=${DIR#./}
             [ "$DIR" = "." ] && DIR=""
             URL="$BASE_URL${DIR:+/$DIR}/"
             
-            sed -i "/<\/title>/a \
-              <meta name=\"description\" content=\"$SAFE_DESC\">\
-              \n\
-              \n\
-              <link rel=\"canonical\" href=\"$URL\">\
-              \n\
-              \n\
-              <meta property=\"og:title\" content=\"$SAFE_TITLE\">\
-              \n\
-              <meta property=\"og:description\" content=\"$SAFE_DESC\">\
-              \n\
-              <meta property=\"og:url\" content=\"$URL\">\
-              \n\
-              \n\
-              <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">\
-              \n\
-              <meta name=\"twitter:description\" content=\"$SAFE_DESC\">\
-              \n\
-              <meta name=\"twitter:url\" content=\"$URL\">" "$file"
-      
+            sed -i "/<meta property=\"og:type"/a \
+              \\
+              <meta property=\"og:type\" content=\"website\">\\
+              <meta property=\"og:title\" content=\"$SAFE_TITLE\">\\
+              <meta property=\"og:description\" content=\"$SAFE_DESC\">\\
+              <meta property=\"og:url\" content=\"$URL\">\\
+              <meta property=\"og:image\" content=\"$STATIC_IMG\">\\
+              \\
+              \\
+              <meta name=\"twitter:card\" content=\"summary_large_image\">\\
+              <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">\\
+              <meta name=\"twitter:description\" content=\"$SAFE_DESC\">\\
+              <meta name=\"twitter:url\" content=\"$URL\">\\
+              <meta name=\"twitter:image\" content=\"$STATIC_IMG\">" "$file"
+              \\
+              \\
+              <link rel=\"canonical\" href=\"$URL\">\\
+              \\
           done
           
 
