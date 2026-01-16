@@ -85,6 +85,8 @@ jobs:
             # Note: We indent specifically for visual clean-up in source
             cat > seo_block.txt <<EOF
             <meta name="description" content="$SAFE_DESC">
+                        
+            <link rel="canonical" href="$URL">
             
             <meta property="og:type" content="$SAFE_TYPE">
             <meta property="og:title" content="$SAFE_TITLE">
@@ -97,8 +99,7 @@ jobs:
             <meta name="twitter:description" content="$SAFE_DESC">
             <meta name="twitter:url" content="$URL">
             <meta name="twitter:image" content="$STATIC_IMG">
-            
-            <link rel="canonical" href="$URL">
+
           EOF
             
             # -------------------------------
