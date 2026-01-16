@@ -38,85 +38,52 @@ jobs:
           
           find . -type f -name "*.html" -not -path '*/.*' | while read file; do
             echo "Processing: $file"
-
+      
             # -------------------------------
             # 1. EXTRACT RAW DATA
             # -------------------------------
             TITLE=$(sed -n 's|.*<title>\(.*\)</title>.*|\1|p' "$file")
-            
-            # Extract description cautiously (grab the first instance only)
             DESC=$(grep -m 1 -oP '(?<=<meta name="description" content=")[^"]*' "$file" || true)
-
+      
             # -------------------------------
-            # 2. SANITIZE (Escape quotes & ampersands)
+            # 2. SANITIZE
             # -------------------------------
-            # We use python or simple sed to ensure strict HTML safety
             SAFE_TITLE=$(echo "$TITLE" | sed 's/"/\&quot;/g')
             SAFE_DESC=$(echo "$DESC" | sed 's/"/\&quot;/g')
-
+      
             # -------------------------------
-            # 3. THE SAFE UPDATE FUNCTION
-            #    (Deletes old tag -> Adds new tag)
+            # 3. DELETE OLD TAGS
             # -------------------------------
-            update_meta () {
-              local key=$1
-              local val=$2
-              local attr=$3
-
-              if [ -n "$val" ]; then
-                # A. DELETE existing line containing this key (cleans up corruption)
-                sed -i "/$attr=\"$key\"/d" "$file"
-                
-                # B. ADD fresh line after <title>
-                sed -i "/<\/title>/a \    <meta $attr=\"$key\" content=\"$val\">" "$file"
-              fi
-            }
-
+            sed -i "/<meta name=\"description\"/d" "$file"
+            sed -i "/<link rel=\"canonical\"/d" "$file"
+            sed -i "/<meta property=\"og:/d" "$file"
+            sed -i "/<meta name=\"twitter:/d" "$file"
+      
             # -------------------------------
-            # 4. RUN UPDATES
+            # 4. ADD NEW TAGS IN ORDER
             # -------------------------------
-            
-            # Update OG and Twitter tags
-            update_meta "og:title" "$SAFE_TITLE" "property"
-            update_meta "og:description" "$SAFE_DESC" "property"
-            update_meta "twitter:title" "$SAFE_TITLE" "name"
-            update_meta "twitter:description" "$SAFE_DESC" "name"
-            
-            # Fix Main Description (Delete/Re-add ensures no duplicates)
-            # Note: We check if SAFE_DESC is not empty to avoid deleting without replacing
+            # Description immediately after <title>
             if [ -n "$SAFE_DESC" ]; then
-               sed -i "/<meta name=\"description\"/d" "$file"
-               sed -i "/<\/title>/a \    <meta name=\"description\" content=\"$SAFE_DESC\">" "$file"
+              sed -i "/<\/title>/a \    <meta name=\"description\" content=\"$SAFE_DESC\">" "$file"
             fi
-
-            # -------------------------------
-            # 5. FIX CANONICAL
-            # -------------------------------
-            if [[ "$file" == *"index.html" ]]; then
-               DIR=$(dirname "$file")
-               
-               # FIX: Strip the leading "./" from the directory path
-               DIR=${DIR#./}
-
-               # If dirname returned "." (root), clear it to avoid "https://..././"
-               [ "$DIR" = "." ] && DIR=""
-
-               if [ -z "$DIR" ]; then 
-                  URL="$BASE_URL/"
-               else 
-                  URL="$BASE_URL/$DIR/"
-               fi
-               
-               # Delete old canonical
-               sed -i "/<link rel=\"canonical\"/d" "$file"
-               # Add new canonical
-               sed -i "/<\/title>/a \    <link rel=\"canonical\" href=\"$URL\">" "$file"
-
-               # Update URL meta
-               update_meta "og:url" "$URL" "property"
-               update_meta "twitter:url" "$URL" "name"
-            fi
-
+      
+            # Canonical URL
+            DIR=$(dirname "$file")
+            DIR=${DIR#./}
+            [ "$DIR" = "." ] && DIR=""
+            URL="$BASE_URL${DIR:+/$DIR}/"
+            sed -i "/<\/title>/a \    <link rel=\"canonical\" href=\"$URL\">" "$file"
+      
+            # Open Graph tags
+            sed -i "/<\/title>/a \    <meta property=\"og:title\" content=\"$SAFE_TITLE\">" "$file"
+            sed -i "/<\/title>/a \    <meta property=\"og:description\" content=\"$SAFE_DESC\">" "$file"
+            sed -i "/<\/title>/a \    <meta property=\"og:url\" content=\"$URL\">" "$file"
+      
+            # Twitter tags
+            sed -i "/<\/title>/a \    <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">" "$file"
+            sed -i "/<\/title>/a \    <meta name=\"twitter:description\" content=\"$SAFE_DESC\">" "$file"
+            sed -i "/<\/title>/a \    <meta name=\"twitter:url\" content=\"$URL\">" "$file"
+      
           done
 
       # -------------------------------------------------
