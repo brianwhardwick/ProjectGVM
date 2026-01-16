@@ -76,17 +76,25 @@ jobs:
             sed -i "/<\/title>/a \
               <meta name=\"description\" content=\"$SAFE_DESC\">\
               \n\
+              \n\
               <link rel=\"canonical\" href=\"$URL\">\
               \n\
+              \n\
               <meta property=\"og:title\" content=\"$SAFE_TITLE\">\
+              \n\
               <meta property=\"og:description\" content=\"$SAFE_DESC\">\
+              \n\
               <meta property=\"og:url\" content=\"$URL\">\
               \n\
+              \n\
               <meta name=\"twitter:title\" content=\"$SAFE_TITLE\">\
+              \n\
               <meta name=\"twitter:description\" content=\"$SAFE_DESC\">\
+              \n\
               <meta name=\"twitter:url\" content=\"$URL\">" "$file"
       
           done
+          
 
       # -------------------------------------------------
       # COMMIT & PUSH 
