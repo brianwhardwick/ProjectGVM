@@ -1103,6 +1103,16 @@ a.text-link:hover {
             }
         }
 
+        /* 5. Full Width Image (Non-wrapped) */
+        /* Usage: <div class="article-image full-width"> */
+
+        .article-image.full-width {
+            float: none;        /* Disable the left/right float */
+            width: 100%;        /* Span the full container width */
+            clear: both;        /* Ensure no text sits beside it */
+            margin: 2rem 0;     /* Add vertical breathing room */
+        }
+
 
 
 
