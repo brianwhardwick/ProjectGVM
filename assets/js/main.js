@@ -15,41 +15,24 @@ const GVMApp = (function() {
     // --- 1. Configuration ---
 
     const config = {
-
         appUrl: "https://gvmcalculator.streamlit.app/?embed=true&theme=light",
-
+        gaId: "G-LJ12ZW06K4",
         selectors: {
-
             headerPlaceholder: "#header-placeholder",
-
             footerPlaceholder: "#footer-placeholder",
-
             year: "#year",
-
             checkbox: "#acknowledge",
-
             startBtn: "#startBtn",
-
             appContainer: "#app-container",
-
             iframe: "#gvm-frame",
-
             loader: "#loader",
-
             intro: ".card-intro",
-
             wrapper: ".main-wrapper",
-
             faqDetails: ".faq-item details",
-
             // Navigation Selectors
-
             navToggle: ".navbar-toggle",
-
             navMenu: ".nav-menu",
-
             navLinks: ".nav-links, .dropdown-menu a"
-
         }
 
     };
@@ -134,6 +117,30 @@ const GVMApp = (function() {
 
         }
 
+    };
+
+
+
+    const loadAnalytics = () => {
+        // Prevent loading twice
+        if (document.querySelector(`script[src*="${config.gaId}"]`)) return;
+
+        // 1. Create the async script tag (https://www.googletagmanager.com/gtag/js...)
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${config.gaId}`;
+        document.head.appendChild(script);
+
+        // 2. Initialize the dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        // Make gtag global so other page scripts (like calculator) can use it
+        window.gtag = gtag; 
+        
+        gtag('js', new Date());
+        gtag('config', config.gaId);
+        
+        console.log("GA4 Loaded: " + config.gaId);
     };
 
 
@@ -400,22 +407,16 @@ const GVMApp = (function() {
 
     };
 
-   
-
     // --- 5. Public Init ---
 
     return {
 
         init: function() {
-
+            loadAnalytics();
             loadSharedComponents();
-
             bindEvents();
-
             initFAQ(); // Initialize the custom FAQ script if it exists
-
         }
-
     };
 
 
