@@ -1101,8 +1101,19 @@ a.text-link:hover {
             .article-image {
                 float: none !important;
                 width: 100%;
-                margin: 20px 0;
+                margin: 00px 0;
             }
+
+          /* ODD images (1st, 3rd) float RIGHT */
+          .article-image:nth-of-type(odd) {
+              margin: 0px; /* Space between text and image */
+          }
+
+          /* EVEN images (2nd, 4th) float LEFT */
+          .article-image:nth-of-type(even) {
+              margin: 0px; /* Space between text and image */
+
+          }
         }
 
         /* 5. Full Width Image (Non-wrapped) */
@@ -1298,6 +1309,7 @@ a.text-link:hover {
   /* --- App Container --- */
   #app-container {
     display: none;
+    max-width: 1800px;
     width: 100%;
     height: calc(100dvh - 70px); /* was 92dvh; */
     overflow: hidden;
@@ -1588,9 +1600,10 @@ header.main-header.app-active {
     
     /* Top Anchor */
     top: 75px !important; 
-    
+    left: 50%;
+    transform: translateX(-50%);
     /* Left/Right Anchor */
-    left: 10px !important;
+    
     width: calc(100vw - 20px) !important; 
     
     /* --- THE FIX FOR IPHONE --- */
