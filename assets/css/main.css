@@ -955,6 +955,7 @@ img.hero-logo {
   }
 
   #app-container {
+    max-width: 2000px;
     height: calc(100vh - 65px);   /* fallback */
     height: calc(100dvh - 65px);  /* preferred */
   }
@@ -1629,6 +1630,7 @@ header.main-header.app-active {
     border: none;
 
 }
+
 
 
 
