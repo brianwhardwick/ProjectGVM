@@ -16,6 +16,7 @@ const GVMApp = (function() {
 
     const config = {
         appUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/?embed=true&theme=light",
+        baseUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/",
         gaId: "G-LJ12ZW06K4",
         selectors: {
             headerPlaceholder: "#header-placeholder",
