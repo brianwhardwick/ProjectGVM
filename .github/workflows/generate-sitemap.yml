@@ -30,12 +30,18 @@ jobs:
           owner = os.environ['GITHUB_OWNER']
           repo = os.environ['GITHUB_REPO']
 
-          # Auto-detect GitHub Pages base URL
-          if repo.lower() == owner.lower():
-              BASE_URL = f"https://{owner}.github.io/"
+          # Auto-detect base URL (custom domain > GitHub Pages URL)
+          if os.path.isfile('CNAME'):
+              with open('CNAME', 'r', encoding='utf-8') as f:
+                  domain = f.read().strip()
+                  domain = domain.replace('http://', '').replace('https://', '').rstrip('/')
+                  BASE_URL = f"https://{domain}/"
           else:
-              BASE_URL = f"https://{owner}.github.io/{repo}/"
-
+              if repo.lower() == owner.lower():
+                  BASE_URL = f"https://{owner}.github.io/"
+              else:
+                  BASE_URL = f"https://{owner}.github.io/{repo}/"
+          
           if not BASE_URL.endswith('/'):
               BASE_URL += '/'
 
@@ -55,7 +61,7 @@ jobs:
                   if rel_path == 'index.html':
                       url = BASE_URL
                   else:
-                      folder = os.path.dirname(rel_path)
+                      folder = os.path.dirname(rel_path).lstrip('./')
                       url = f"{BASE_URL}{folder}/"
 
                   lastmod = datetime.fromtimestamp(
