@@ -15,7 +15,7 @@ const GVMApp = (function() {
     // --- 1. Configuration ---
 
     const config = {
-        appUrl: "https://gvmcalculator.streamlit.app/?embed=true&theme=light",
+        appUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/?embed=true&theme=light",
         gaId: "G-LJ12ZW06K4",
         selectors: {
             headerPlaceholder: "#header-placeholder",
