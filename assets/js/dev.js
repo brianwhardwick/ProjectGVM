@@ -1,6 +1,5 @@
 /**
  * Project GVM - Main Site Logic
- * Optimized for GitHub Pages (Shared Components & Calculator Launcher)
  */
 
 const GVMApp = (function() {
@@ -289,10 +288,16 @@ const GVMApp = (function() {
     // --- 5. Public Init ---
     return {
         init: function() {
+            // 1. Analytics & Tracking
             loadAnalytics();
+
+            // 2. UI & Components
             loadSharedComponents();
             bindEvents();
-            initFAQ(); // Initialize the custom FAQ script if it exists
+            initFAQ();
+
+            // 3. Performance (Wake up the server)
+            preWarmApp(); 
         }
     };
 
