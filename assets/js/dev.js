@@ -73,6 +73,7 @@ const GVMApp = (function() {
         }
     };
 
+
     const loadAnalytics = () => {
         // Prevent loading twice
         if (document.querySelector(`script[src*="${config.gaId}"]`)) return;
@@ -111,6 +112,7 @@ const GVMApp = (function() {
         }
     };
 
+    // --- 4. Pre-Warming Logic (New) ---
     // --- 4. Pre-Warming Logic (Optimized) ---
     const preWarmApp = () => {
         const runPreWarm = () => {
@@ -147,7 +149,6 @@ const GVMApp = (function() {
             window.addEventListener('load', runPreWarm);
         }
     };
-
 
 
     const launchCalculator = () => {
@@ -192,6 +193,7 @@ const GVMApp = (function() {
         btn.disabled = true;
     };
 
+
     // --- 4. Event Binding ---
 
     const bindEvents = () => {
@@ -208,6 +210,8 @@ const GVMApp = (function() {
         if (startBtn) {
             startBtn.addEventListener('click', launchCalculator);
         }
+
+
 
         if (iframe) {
             iframe.addEventListener('load', () => {
@@ -253,7 +257,7 @@ const GVMApp = (function() {
                    
                     if (item.id === config.selectors.headerPlaceholder) {
                         highlightActiveLink();
-                        initMobileMenu(); // <--- FIXED: Init Menu AFTER injection
+                        initMobileMenu();
                     }
 
                     if (item.id === config.selectors.footerPlaceholder) {
@@ -288,18 +292,14 @@ const GVMApp = (function() {
     // --- 5. Public Init ---
     return {
         init: function() {
-            // 1. Analytics & Tracking
             loadAnalytics();
-
-            // 2. UI & Components
             loadSharedComponents();
             bindEvents();
-            initFAQ();
-
-            // 3. Performance (Wake up the server)
-            preWarmApp(); 
+            initFAQ(); // Initialize the custom FAQ script if it exists
+            preWarmApp();
         }
     };
+
 
 
 })();
