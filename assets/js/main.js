@@ -1,17 +1,16 @@
 /**
-
  * Project GVM - Main Site Logic
-
  */
 
 const GVMApp = (function() {
+
     'use strict';
 
     // --- 1. Configuration ---
 
     const config = {
-        appUrl: "https://gvmcalculator.streamlit.app/?embed=true&theme=light",
-        baseUrl: "https://gvmcalculator.streamlit.app/",
+        appUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/?embed=true&theme=light",
+        baseUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/",
         gaId: "G-LJ12ZW06K4",
         selectors: {
             headerPlaceholder: "#header-placeholder",
@@ -31,7 +30,6 @@ const GVMApp = (function() {
             navLinks: ".nav-links, .dropdown-menu a"
         }
     };
-
 
     // --- 2. Mobile Menu Logic (Moved Here) ---
     const initMobileMenu = () => {
@@ -57,7 +55,6 @@ const GVMApp = (function() {
     };
 
     // --- 3. UI Methods ---
-
     const initDynamicYear = () => {
         const yearEl = document.querySelector(config.selectors.year);
         if (yearEl) {
@@ -73,7 +70,6 @@ const GVMApp = (function() {
             });
         }
     };
-
 
     const loadAnalytics = () => {
         // Prevent loading twice
@@ -151,7 +147,6 @@ const GVMApp = (function() {
         }
     };
 
-
     const launchCalculator = () => {
         // 1. Select Elements
         const btn = document.querySelector(config.selectors.startBtn);
@@ -193,7 +188,6 @@ const GVMApp = (function() {
         btn.textContent = "Loading Calculator...";
         btn.disabled = true;
     };
-
 
     // --- 4. Event Binding ---
 
@@ -301,10 +295,7 @@ const GVMApp = (function() {
         }
     };
 
-
-
 })();
-
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
