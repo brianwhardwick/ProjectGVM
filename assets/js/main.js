@@ -109,9 +109,15 @@ const GVMApp = (function() {
         }
     };
 
-    // --- 4. Pre-Warming Logic (New) ---
-    // --- 4. Pre-Warming Logic (Optimized) ---
+    // --- 4. Pre-Warming Logic ---
     const preWarmApp = () => {
+
+        // 🛑 GUARD CLAUSE: Only run this on the calculator page
+        // If the URL path does not contain '/calculator', stop immediately.
+        if (!window.location.pathname.startsWith('/calculator')) {
+            return;
+        }
+        
         const runPreWarm = () => {
             // 1. Network Handshake (DNS/TLS pre-connection)
             // We add this first so the socket opens while we prepare the fetch
@@ -299,3 +305,4 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
+
