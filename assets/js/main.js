@@ -221,7 +221,7 @@ const GVMApp = (function() {
                     setTimeout(() => {
                         loader.style.opacity = '0';
                         setTimeout(() => loader.style.display = "none", 500);
-                    }, 5000);
+                    }, 2000);
                 }
             });
         }
@@ -305,5 +305,6 @@ const GVMApp = (function() {
 
 // Start App
 document.addEventListener('DOMContentLoaded', GVMApp.init);
+
 
 
