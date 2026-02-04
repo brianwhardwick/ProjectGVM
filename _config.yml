@@ -1,0 +1,22 @@
+plugins:
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      sitemap: false
+
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      sitemap: false
+
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      sitemap:
+        changefreq: null
+        priority: null
