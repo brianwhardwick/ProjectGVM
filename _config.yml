@@ -1,22 +1,18 @@
+# -----------------------------
+# Jekyll configuration
+# -----------------------------
+
 plugins:
   - jekyll-sitemap
 
-defaults:
-  - scope:
-      path: ""
-    values:
-      sitemap: false
+# Exclude all markdown and html files by default
+exclude:
+  - "**/*.md"
+  - "**/*.html"
 
-  - scope:
-      path: ""
-      type: "pages"
-    values:
-      sitemap: false
+# Explicitly include ONLY index.html files
+include:
+  - index.html
 
-  - scope:
-      path: ""
-      type: "pages"
-    values:
-      sitemap:
-        changefreq: null
-        priority: null
+# Ensure clean, directory-style URLs
+permalink: pretty
