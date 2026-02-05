@@ -2,26 +2,40 @@
 # Jekyll configuration
 # -----------------------------
 
+# 1. Site Settings (Critical for SEO/Sitemap)
+url: "https://www.projectgvm.com.au"
+baseurl: ""
+title: "Project GVM"
+timezone: "Australia/Sydney"
+encoding: "utf-8"
+
+# 2. Plugins
 plugins:
   - jekyll-sitemap
 
+# 3. Build Settings
+permalink: pretty
+
+# 4. Exclusions
+# These files will NOT be built or uploaded to the server.
 exclude:
-  - "**/*.md"
   - "Gemfile"
   - "Gemfile.lock"
   - "node_modules"
+  - "README.md"
+  - "**/*.md"             # Keep ignoring markdown
 
-permalink: pretty
-
-# SPECIFIC FIX: Exclude everything from sitemap, then include index.html files
+# 5. Defaults (Sitemap Control)
+# This logic hides everything from the sitemap by default,
+# then re-enables ONLY the main 'index.html' pages.
 defaults:
-  # Step 1: Set sitemap to false for every file in the project
+  # First: Hide EVERY file from the sitemap
   - scope:
       path: "" 
     values:
       sitemap: false
   
-  # Step 2: Override and set sitemap to true only for index.html files
+  # Second: Re-enable sitemap ONLY for index.html files
   - scope:
       path: "**/*index.html"
     values:
