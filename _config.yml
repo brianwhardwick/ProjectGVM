@@ -5,14 +5,24 @@
 plugins:
   - jekyll-sitemap
 
-# Exclude all markdown and html files by default
 exclude:
   - "**/*.md"
-  - "**/*.html"
+  - "Gemfile"
+  - "Gemfile.lock"
+  - "node_modules"
 
-# Explicitly include ONLY index.html files
-include:
-  - index.html
-
-# Ensure clean, directory-style URLs
 permalink: pretty
+
+# SPECIFIC FIX: Exclude everything from sitemap, then include index.html files
+defaults:
+  # Step 1: Set sitemap to false for every file in the project
+  - scope:
+      path: "" 
+    values:
+      sitemap: false
+  
+  # Step 2: Override and set sitemap to true only for index.html files
+  - scope:
+      path: "**/*index.html"
+    values:
+      sitemap: true
