@@ -1,0 +1,31 @@
+<footer class="footer">
+  <div class="footer-links">
+    <a href="/about/">ABOUT</a>
+    <span class="footer-separator">|</span>
+    <a href="/about/#contact">CONTACT US</a>
+    <span class="footer-separator">|</span>
+    <a href="/notices/disclaimer/">DISCLAIMER</a>
+    <span class="footer-separator">|</span>
+    <a href="/notices/privacy/">PRIVACY POLICY</a>
+    <span class="footer-separator">|</span>
+    <a href="/notices/terms/">TERMS AND CONDITIONS</a>
+  </div>
+    
+  <div class="footer-copyright">
+    © <span id="copyright-year"></span> Project GVM. All rights reserved.
+  </div>      
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const startYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const display = document.getElementById('copyright-year');
+  
+      if (currentYear > startYear) {
+          display.textContent = `${startYear}–${currentYear}`;
+      } else {
+          display.textContent = startYear;
+      }
+  });
+</script>
