@@ -328,8 +328,8 @@ const GVMApp = (function() {
     };
 
     // --- 5. Iframe Idle Timeout Logic ---
-    const WARNING_TIMEOUT_MS = 10 * 1000;
-    const DISCONNECT_TIMEOUT_MS = 20 * 1000;
+    const WARNING_TIMEOUT_MS = 9  * 1000;
+    const DISCONNECT_TIMEOUT_MS = 10  * 1000;
 
     let warningTimer = null;
     let disconnectTimer = null;
@@ -401,9 +401,9 @@ const GVMApp = (function() {
             `;
 
             overlay.innerHTML = `
-                <h2 style="color: #333; margin-bottom: 15px;">Session Paused</h2>
+                <h2 style="color: #333; margin-bottom: 15px;">Session Ended</h2>
                 <p style="color: #666; margin-bottom: 25px;">
-                    Your calculator session was disconnected due to inactivity.
+                    Your calculator session was disconnected due to inactivity. Click below to start a new calculation.
                 </p>
                 <button id="restart-session-btn" style="
                     background: #0b5394;
