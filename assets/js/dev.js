@@ -193,6 +193,9 @@ const GVMApp = (function() {
         // 7. Button Feedback
         btn.textContent = "Loading Calculator...";
         btn.disabled = true;
+
+        // 8. Start idle timers
+        handleIframeStarted();
     };
 
     // --- 4. Event Binding ---
@@ -292,7 +295,6 @@ const GVMApp = (function() {
     };
 
     const showTestPopup = () => {
-        // Create the popup div if it doesn't exist yet
         let popup = document.getElementById('gvm-test-popup');
         if (!popup) {
             popup = document.createElement('div');
@@ -314,33 +316,191 @@ const GVMApp = (function() {
             `;
             document.body.appendChild(popup);
         }
-        
-        // Update the popup text with the current time
+
         const time = new Date().toLocaleTimeString();
         popup.textContent = `⚡ Streamlit Active: ${time}`;
         popup.style.opacity = '1';
 
-        // Reset the fade-out timer on every new ping
         clearTimeout(window.popupTimer);
         window.popupTimer = setTimeout(() => {
             popup.style.opacity = '0';
-        }, 1000); // Fades out after 1 second of no activity
+        }, 1000);
     };
 
-    const initStreamlitListener = () => {
+    // --- 5. Iframe Idle Timeout Logic ---
+    const WARNING_TIMEOUT_MS = 10 * 1000;
+    const DISCONNECT_TIMEOUT_MS = 20 * 1000;
+
+    let warningTimer = null;
+    let disconnectTimer = null;
+    let idleListenersInitialised = false;
+
+    const getIframe = () => document.querySelector(config.selectors.iframe);
+    const getContainer = () => document.querySelector(config.selectors.appContainer);
+
+    const clearIdleTimers = () => {
+        clearTimeout(warningTimer);
+        clearTimeout(disconnectTimer);
+        warningTimer = null;
+        disconnectTimer = null;
+    };
+
+    const hideOverlays = () => {
+        const disconnectOverlay = document.getElementById("timeout-overlay");
+        const warningOverlay = document.getElementById("warning-overlay");
+
+        if (disconnectOverlay) disconnectOverlay.style.display = "none";
+        if (warningOverlay) warningOverlay.style.display = "none";
+    };
+
+    const showWarningOverlay = () => {
+        let warningOverlay = document.getElementById("warning-overlay");
+
+        if (!warningOverlay) {
+            warningOverlay = document.createElement("div");
+            warningOverlay.id = "warning-overlay";
+            warningOverlay.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #ffcc00;
+                color: #333;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                font-family: sans-serif;
+                font-weight: bold;
+                z-index: 9999;
+                text-align: center;
+                pointer-events: none;
+            `;
+            warningOverlay.innerHTML = `⚠️ Session expiring in 60 seconds. Interact with the page to keep it active.`;
+            document.body.appendChild(warningOverlay);
+        }
+
+        warningOverlay.style.display = "block";
+    };
+
+    const showDisconnectOverlay = () => {
+        const container = getContainer();
+        if (!container) return;
+
+        let overlay = document.getElementById("timeout-overlay");
+
+        if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.id = "timeout-overlay";
+            overlay.style.cssText = `
+                text-align: center;
+                padding: 60px 20px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                margin-top: 20px;
+            `;
+
+            overlay.innerHTML = `
+                <h2 style="color: #333; margin-bottom: 15px;">Session Paused</h2>
+                <p style="color: #666; margin-bottom: 25px;">
+                    Your calculator session was disconnected due to inactivity.
+                </p>
+                <button id="restart-session-btn" style="
+                    background: #0b5394;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 4px;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">Start New Calculation</button>
+            `;
+
+            container.appendChild(overlay);
+
+            const restartBtn = overlay.querySelector("#restart-session-btn");
+            if (restartBtn) {
+                restartBtn.addEventListener("click", () => {
+                    location.reload();
+                });
+            }
+        }
+
+        overlay.style.display = "block";
+    };
+
+    const disconnectSession = () => {
+        const iframe = getIframe();
+        if (!iframe) return;
+
+        clearIdleTimers();
+        hideOverlays();
+
+        iframe.src = "about:blank";
+        iframe.style.display = "none";
+
+        showDisconnectOverlay();
+        console.log("GVM Calculator: Session disconnected due to inactivity.");
+    };
+
+    const isIframeActive = () => {
+        const iframe = getIframe();
+        if (!iframe) return false;
+
+        const src = iframe.getAttribute("src") || "";
+        return src !== "" && src !== "about:blank" && iframe.style.display !== "none";
+    };
+
+    const resetIdleTimers = () => {
+        if (!isIframeActive()) return;
+
+        clearIdleTimers();
+        hideOverlays();
+
+        warningTimer = setTimeout(showWarningOverlay, WARNING_TIMEOUT_MS);
+        disconnectTimer = setTimeout(disconnectSession, DISCONNECT_TIMEOUT_MS);
+    };
+
+    const handleIframeStarted = () => {
+        const iframe = getIframe();
+        if (!iframe) return;
+
+        iframe.style.display = "block";
+        hideOverlays();
+        resetIdleTimers();
+    };
+
+        const initStreamlitListener = () => {
+        if (idleListenersInitialised) return;
+        idleListenersInitialised = true;
+
+        // Listen for activity on the parent page
+        ["mousemove", "keydown", "scroll", "touchstart", "click"].forEach((evt) => {
+            window.addEventListener(evt, resetIdleTimers, { passive: true });
+        });
+
+        // Listen for activity messages from the Streamlit iframe
         window.addEventListener("message", (event) => {
-            // 1. Security check: Ensure message comes from your Cloud Run domain
-            const expectedOrigin = new URL(config.baseUrl).origin;
+            let expectedOrigin;
+            try {
+                expectedOrigin = new URL(config.baseUrl).origin;
+            } catch (err) {
+                console.warn("GVM Calculator: invalid config.baseUrl");
+                return;
+            }
+
             if (event.origin !== expectedOrigin) return;
 
-            // 2. Action: Check if it's the activity ping
             if (event.data && event.data.type === "streamlit-active") {
                 console.log("Ping received from Streamlit!");
                 showTestPopup();
+                resetIdleTimers();
             }
         });
     };
 
+    
     // --- 5. Public Init ---
     return {
         init: function() {
@@ -349,7 +509,7 @@ const GVMApp = (function() {
             bindEvents();
             initFAQ(); 
             preWarmApp();
-            initStreamlitListener(); // <-- ADD THIS LINE HERE
+            initStreamlitListener();
         }
     };
 
