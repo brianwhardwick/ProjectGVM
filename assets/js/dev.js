@@ -9,8 +9,8 @@ const GVMApp = (function() {
     // --- 1. Configuration ---
 
     const config = {
-        appUrl: "https://projectgvm-dev.streamlit.app/,
-        baseUrl: "https://projectgvm-dev.streamlit.app/",
+        appUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/?embed=true&theme=light",
+        baseUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/",
         gaId: "G-LJ12ZW06K4",
         selectors: {
             headerPlaceholder: "#header-placeholder",
@@ -292,7 +292,7 @@ const GVMApp = (function() {
     };
 
 
-const showTestPopup = () => {
+    const showTestPopup = () => {
         // Create the popup div if it doesn't exist yet
         let popup = document.getElementById('gvm-test-popup');
         if (!popup) {
