@@ -328,8 +328,8 @@ const GVMApp = (function() {
     };
 
     // --- 5. Iframe Idle Timeout Logic ---
-    const WARNING_TIMEOUT_MS = 9  * 1000;
-    const DISCONNECT_TIMEOUT_MS = 10  * 1000;
+    const WARNING_TIMEOUT_MS = 9 * 60 * 1000;
+    const DISCONNECT_TIMEOUT_MS = 10 * 60 * 1000;
 
     let warningTimer = null;
     let disconnectTimer = null;
@@ -493,8 +493,8 @@ const GVMApp = (function() {
             if (event.origin !== expectedOrigin) return;
 
             if (event.data && event.data.type === "streamlit-active") {
-                console.log("Ping received from Streamlit!");
-                showTestPopup();
+                //console.log("Ping received from Streamlit!");
+                //showTestPopup();
                 resetIdleTimers();
             }
         });
