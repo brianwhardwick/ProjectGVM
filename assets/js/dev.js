@@ -9,8 +9,8 @@ const GVMApp = (function() {
     // --- 1. Configuration ---
 
     const config = {
-        appUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/?embed=true&theme=light",
-        baseUrl: "https://projectgvm-app-171161795016.australia-southeast1.run.app/",
+        appUrl: "https://projectgvm-dev.streamlit.app/",
+        baseUrl: "https://projectgvm-dev.streamlit.app/",
         gaId: "G-LJ12ZW06K4",
         selectors: {
             headerPlaceholder: "#header-placeholder",
@@ -290,14 +290,66 @@ const GVMApp = (function() {
             }
         });
     };
+
+    const showTestPopup = () => {
+        // Create the popup div if it doesn't exist yet
+        let popup = document.getElementById('gvm-test-popup');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'gvm-test-popup';
+            popup.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                z-index: 9999;
+                font-family: sans-serif;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transition: opacity 0.2s ease-in-out;
+                pointer-events: none;
+            `;
+            document.body.appendChild(popup);
+        }
+        
+        // Update the popup text with the current time
+        const time = new Date().toLocaleTimeString();
+        popup.textContent = `⚡ Streamlit Active: ${time}`;
+        popup.style.opacity = '1';
+
+        // Reset the fade-out timer on every new ping
+        clearTimeout(window.popupTimer);
+        window.popupTimer = setTimeout(() => {
+            popup.style.opacity = '0';
+        }, 1000); // Fades out after 1 second of no activity
+    };
+
+    const initStreamlitListener = () => {
+        window.addEventListener("message", (event) => {
+            // 1. Security check: Ensure message comes from your Cloud Run domain
+            const expectedOrigin = new URL(config.baseUrl).origin;
+            if (event.origin !== expectedOrigin) return;
+
+            // 2. Action: Check if it's the activity ping
+            if (event.data && event.data.type === "streamlit-active") {
+                console.log("Ping received from Streamlit!");
+                showTestPopup();
+            }
+        });
+    };
+
     // --- 5. Public Init ---
     return {
         init: function() {
             loadAnalytics();
             loadSharedComponents();
             bindEvents();
-            initFAQ(); // Initialize the custom FAQ script if it exists
+            initFAQ(); 
             preWarmApp();
+            initStreamlitListener(); // <-- ADD THIS LINE HERE
         }
     };
 
