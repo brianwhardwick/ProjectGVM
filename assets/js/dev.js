@@ -375,7 +375,7 @@ const GVMApp = (function() {
                 text-align: center;
                 pointer-events: none;
             `;
-            warningOverlay.innerHTML = `⚠️ Session expiring in 60 seconds. Interact with the page to keep it active.`;
+            warningOverlay.innerHTML = `⚠️ Session expiring soon due to inactivity. Interact with the page to keep it active.`;
             document.body.appendChild(warningOverlay);
         }
 
