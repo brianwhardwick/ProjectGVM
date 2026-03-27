@@ -697,6 +697,30 @@ img.hero-logo {
 
 
 
+/* --- Article image gallery at bottom of article --- */
+.article-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+  clear: both;
+}
+
+.article-gallery-item {
+  margin: 0;
+  width: 100%;
+}
+
+.article-gallery-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+
+
 
 
 
