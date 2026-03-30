@@ -1069,21 +1069,21 @@ figcaption {
   }
 
 
-/* --- Article Inline Links --- */
-.card p a, 
-.card li a {
+/* --- Article Inline Links (Excluding .no-style-link) --- */
+.card p a:not(.no-style-link), 
+.card li a:not(.no-style-link) {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
-  border-bottom: 2px solid rgba(11, 83, 148, 0.2); /* Faint underline using your brand blue */
+  border-bottom: 2px solid rgba(11, 83, 148, 0.2); 
   transition: all 0.2s ease-in-out;
   padding-bottom: 1px;
 }
 
-.card p a:hover, 
-.card li a:hover {
-  border-bottom-color: var(--color-primary); /* Solid line on hover */
-  background-color: rgba(11, 83, 148, 0.05); /* Very faint background highlight */
+.card p a:not(.no-style-link):hover, 
+.card li a:not(.no-style-link):hover {
+  border-bottom-color: var(--color-primary); 
+  background-color: rgba(11, 83, 148, 0.05); 
 }
 
 
