@@ -719,6 +719,13 @@ img.hero-logo {
   border-radius: var(--radius-md);
 }
 
+figcaption {
+  font-size: 0.8rem;
+  color: var(--color-text-muted); /* Uses your root #666666 variable */
+  text-align: center;
+  margin-top: 5px;
+}
+
 
 
 
