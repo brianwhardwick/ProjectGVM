@@ -11,7 +11,6 @@ encoding: "utf-8"
 
 # 2. Plugins
 plugins:
-  - jekyll-sitemap
 
 # 3. Build Settings
 permalink: pretty
