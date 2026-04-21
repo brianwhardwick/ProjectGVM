@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.projectgvm.com.au/</loc>
-    <lastmod>2026-02-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
   </url>
   <url>
     <loc>https://www.projectgvm.com.au/about/</loc>
@@ -10,7 +10,7 @@
   </url>
   <url>
     <loc>https://www.projectgvm.com.au/calculator/</loc>
-    <lastmod>2026-02-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
   </url>
   <url>
     <loc>https://www.projectgvm.com.au/faq/</loc>
@@ -56,4 +56,8 @@
     <loc>https://www.projectgvm.com.au/notices/terms/</loc>
     <lastmod>2026-02-04</lastmod>
   </url>
+</urlset>
+<loc>https://www.projectgvm.com.au/notices/terms/</loc>
+<lastmod>2026-04-21T12:41:54+10:00</lastmod>
+</url>
 </urlset>
